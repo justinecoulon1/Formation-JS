@@ -22,7 +22,6 @@ const randomizeCards = function (cards) {
         cards[i].randomId = (Math.random() * 10)
     }
     const randomizedCards = cards.sort(function (a, b) { return a.randomId - b.randomId });
-    console.log(cards)
     return randomizedCards;
 }
 
@@ -42,9 +41,10 @@ const displayCards = function (cards) {
         const cardBasicImg = document.createElement('img');
         cardBasicImg.src = "/images/mystery.png";
 
+        const cardDivEventListener = () => { onCardClick(card) }
         cardDiv.addEventListener('click', cardDivEventListener)
         cardDiv.append(cardImg);
-        cardDiv.append(cardBasicImg);
+        // cardDiv.append(cardBasicImg);
         mainDisplayDiv.append(cardDiv)
     }
 }
@@ -59,9 +59,10 @@ playButton.addEventListener('click', function () {
     initializeGame();
 })
 
-const cardDivEventListener = function () {
-    reverseCard();
+const onCardClick = function (card) {
+    reverseCard(card);
 }
 
-const reverseCard = function () {
+const reverseCard = function (card) {
+    console.log(`click on card : ${JSON.stringify(card)}`)
 }
