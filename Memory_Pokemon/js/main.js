@@ -1,6 +1,7 @@
 const cardAmount = 10;
 const mainDisplayDiv = document.querySelector(".main-display-div");
 const playButton = document.querySelector("#play-button");
+const cardsDiv = [];
 
 const createCards = function () {
     const cards = [];
@@ -20,7 +21,7 @@ const randomizeCards = function (cards) {
     for (let i = 0; i < cards.length; i++) {
         cards[i].randomId = (Math.random() * 10)
     }
-    const randomizedCards = cards.sort(function (a, b) { return a - b; });
+    const randomizedCards = cards.sort(function (a, b) { return a.randomId - b.randomId });
     console.log(cards)
     return randomizedCards;
 }
@@ -28,12 +29,22 @@ const randomizeCards = function (cards) {
 const displayCards = function (cards) {
     mainDisplayDiv.replaceChildren();
     for (let card of cards) {
+
         const cardDiv = document.createElement('div');
         cardDiv.classList.add("card");
+        cardDiv.id = card.value;
+        cardsDiv.push(cardDiv);
+
         const cardImg = document.createElement('img');
         cardImg.src = card.image;
+        cardImg.classList.add = "hidden";
+
+        const cardBasicImg = document.createElement('img');
+        cardBasicImg.src = "/images/mystery.png";
+
+        cardDiv.addEventListener('click', cardDivEventListener)
         cardDiv.append(cardImg);
-        cardDiv.id = card.value;
+        cardDiv.append(cardBasicImg);
         mainDisplayDiv.append(cardDiv)
     }
 }
@@ -47,3 +58,10 @@ const initializeGame = function () {
 playButton.addEventListener('click', function () {
     initializeGame();
 })
+
+const cardDivEventListener = function () {
+    reverseCard();
+}
+
+const reverseCard = function () {
+}
