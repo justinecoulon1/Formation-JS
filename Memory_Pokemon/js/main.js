@@ -2,6 +2,7 @@ const cardAmount = 10;
 const mainDisplayDiv = document.querySelector(".main-display-div");
 const playButton = document.querySelector("#play-button");
 const cardsDiv = [];
+const currentlyReversedCards = [];
 
 const createCards = function () {
     const cards = [];
@@ -31,20 +32,22 @@ const displayCards = function (cards) {
 
         const cardDiv = document.createElement('div');
         cardDiv.classList.add("card");
-        cardDiv.id = card.value;
         cardsDiv.push(cardDiv);
 
         const cardImg = document.createElement('img');
+        cardImg.classList.add("card-image");
+        cardImg.classList.add("hidden");
         cardImg.src = card.image;
-        cardImg.classList.add = "hidden";
+        cardImg.id = "id"
 
-        const cardBasicImg = document.createElement('img');
-        cardBasicImg.src = "/images/mystery.png";
+        const cardHiddenImg = document.createElement('img');
+        cardHiddenImg.classList.add("card-hidden-image");
+        cardHiddenImg.src = "/images/mystery.png";
 
-        const cardDivEventListener = () => { onCardClick(card) }
+        const cardDivEventListener = () => { onCardClick(card, cardDiv) }
         cardDiv.addEventListener('click', cardDivEventListener)
         cardDiv.append(cardImg);
-        // cardDiv.append(cardBasicImg);
+        cardDiv.append(cardHiddenImg);
         mainDisplayDiv.append(cardDiv)
     }
 }
@@ -59,10 +62,41 @@ playButton.addEventListener('click', function () {
     initializeGame();
 })
 
-const onCardClick = function (card) {
-    reverseCard(card);
+const onCardClick = function (card, cardDiv) {
+    reverseCard(card, cardDiv);
 }
 
-const reverseCard = function (card) {
-    console.log(`click on card : ${JSON.stringify(card)}`)
+const reverseCard = function (card, cardDiv) {
+    let cardImg = cardDiv.querySelector(".card-image");
+    let cardHiddenImg = cardDiv.querySelector(".card-hidden-image");
+    if (cardImg.classList.contains("hidden") && currentlyReversedCards.length < 2) {
+        console.log("je retourne les cartes")
+        console.log(card)
+        cardImg.classList.toggle("hidden");
+        cardHiddenImg.classList.toggle("hidden");
+        currentlyReversedCards.push(card);
+        console.log(currentlyReversedCards.length)
+
+        if (currentlyReversedCards.length === 2) {
+            const isValidPair = checkValidPairs(currentlyReversedCards);
+            console.log("is valid pair = " + isValidPair)
+            if (isValidPair) {
+                console.log("je mets mes cartes dans le tas 'gagné'");
+                currentlyReversedCards.length = 0;
+            } else {
+                resetReversedCards(cardImg, cardHiddenImg);
+            }
+        }
+    }
+}
+
+const checkValidPairs = function (currentlyReversedCards) {
+    return currentlyReversedCards.length === 2 && currentlyReversedCards[0].value === currentlyReversedCards[1].value;
+}
+
+const resetReversedCards = function (cardImg, cardHiddenImg) {
+    console.log("je retire les cartes mauvaises")
+    currentlyReversedCards.length = 0;
+    cardHiddenImg.classList.toggle("hidden");
+    cardImg.classList.toggle("hidden");
 }

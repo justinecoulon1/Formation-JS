@@ -36,7 +36,13 @@ main {
         width: 20rem;
     }
 }
+.card-image-hidden {
+    display: flex;
+}.card-image {
+    display: flex;
+}
 
 .hidden {
     display: none;
 }
+
