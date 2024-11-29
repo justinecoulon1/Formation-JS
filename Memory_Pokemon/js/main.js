@@ -3,6 +3,7 @@ const mainDisplayDiv = document.querySelector(".main-display-div");
 const playButton = document.querySelector("#play-button");
 const cardsDiv = [];
 const currentlyReversedCards = [];
+const correctPairs = []
 
 const createCards = function () {
     const cards = [];
@@ -74,29 +75,46 @@ const reverseCard = function (card, cardDiv) {
         console.log(card)
         cardImg.classList.toggle("hidden");
         cardHiddenImg.classList.toggle("hidden");
-        currentlyReversedCards.push(card);
+        currentlyReversedCards.push({ card, cardImg, cardHiddenImg });
         console.log(currentlyReversedCards.length)
 
         if (currentlyReversedCards.length === 2) {
             const isValidPair = checkValidPairs(currentlyReversedCards);
             console.log("is valid pair = " + isValidPair)
             if (isValidPair) {
-                console.log("je mets mes cartes dans le tas 'gagné'");
+                correctPairs.push(currentlyReversedCards[0], currentlyReversedCards[1])
                 currentlyReversedCards.length = 0;
+                if (checkIfGameEnded()) {
+                    mainDisplayDiv.replaceChildren();
+                    const winningMessageP = document.createElement('p');
+                    winningMessageP.classList.add('winning-message-p');
+                    winningMessageP.textContent("YOU WON!")
+                    mainDisplayDiv.append(winningMessageP);
+                }
             } else {
-                resetReversedCards(cardImg, cardHiddenImg);
+                console.log("j'attends 2000ms")
+                setTimeout(resetReversedCards, 1000, cardImg, cardHiddenImg);
             }
         }
     }
 }
 
 const checkValidPairs = function (currentlyReversedCards) {
-    return currentlyReversedCards.length === 2 && currentlyReversedCards[0].value === currentlyReversedCards[1].value;
+    return currentlyReversedCards.length === 2 && currentlyReversedCards[0].card.value === currentlyReversedCards[1].card.value;
 }
 
 const resetReversedCards = function (cardImg, cardHiddenImg) {
-    console.log("je retire les cartes mauvaises")
+    console.log("je retire les cartes mauvaises");
+    for (let obj of currentlyReversedCards) {
+        obj.cardHiddenImg.classList.toggle("hidden");
+        obj.cardImg.classList.toggle("hidden");
+    }
+
     currentlyReversedCards.length = 0;
-    cardHiddenImg.classList.toggle("hidden");
-    cardImg.classList.toggle("hidden");
 }
+
+
+const checkIfGameEnded = function () {
+    return correctPairs.length === 10;
+}
+
