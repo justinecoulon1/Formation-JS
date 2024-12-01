@@ -1,4 +1,5 @@
-const cardAmount = 300;
+const difficultySelector = document.querySelector(".difficulty-selector");
+let cardAmount = 10;
 const mainDisplayDiv = document.querySelector(".main-display-div");
 const playButton = document.querySelector("#play-button");
 const allCards = [];
@@ -42,12 +43,14 @@ const initializeCardsDisplay = function (cards) {
 
         const cardImg = document.createElement('img');
         cardImg.classList.add("card-image");
+        cardImg.setAttribute("draggable", "false");
         cardImg.classList.add("hidden");
         cardImg.src = card.image;
         cardImg.id = "id"
 
         const cardHiddenImg = document.createElement('img');
         cardHiddenImg.classList.add("card-hidden-image");
+        cardHiddenImg.setAttribute("draggable", "false");
         cardHiddenImg.src = "/Memory_Pokemon/images/mystery.png";
 
         const cardDivEventListener = () => { onCardClick(card) }
@@ -58,8 +61,13 @@ const initializeCardsDisplay = function (cards) {
     }
 }
 
+const setGameDifficulty = function () {
+    cardAmount = difficultySelector.value;
+}
+
 const initializeGame = function () {
     allCards.length = 0
+    setGameDifficulty();
     allCards.push(...createCards());
     const randomizedCards = randomizeCards(allCards);
     initializeCardsDisplay(randomizedCards);
@@ -85,7 +93,7 @@ const reverseCard = function (card) {
                     displayGameEnd();
                 }
             } else {
-                setTimeout(resetWrongRevealedCards, 1000);
+                setTimeout(resetWrongRevealedCards, 700);
             }
         }
     }
@@ -117,10 +125,11 @@ const resetWrongRevealedCards = function () {
 }
 
 const isGameEnded = function () {
-    return correctPairs.length === cardAmount;
+    return correctPairs.length == cardAmount;
 }
 
 const displayGameEnd = function () {
+    console.log("display end")
     mainDisplayDiv.replaceChildren();
     const winningMessageP = document.createElement('p');
     winningMessageP.classList.add('winning-message-p');

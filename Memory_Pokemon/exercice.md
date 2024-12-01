@@ -1,1 +1,2 @@
-//assigner nombre random à chaque carte, trier par le nombre random de la carte, les placer en fonction de cet ordre
+memory 
+mastermind
