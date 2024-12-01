@@ -62,7 +62,7 @@ const initializeCardsDisplay = function (cards) {
 }
 
 const setGameDifficulty = function () {
-    cardAmount = difficultySelector.value;
+    cardAmount = parseInt(difficultySelector.value);
 }
 
 const initializeGame = function () {
@@ -125,11 +125,10 @@ const resetWrongRevealedCards = function () {
 }
 
 const isGameEnded = function () {
-    return correctPairs.length == cardAmount;
+    return correctPairs.length === cardAmount;
 }
 
 const displayGameEnd = function () {
-    console.log("display end")
     mainDisplayDiv.replaceChildren();
     const winningMessageP = document.createElement('p');
     winningMessageP.classList.add('winning-message-p');
