@@ -1,0 +1,111 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background: rgb(38, 36, 36);
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    gap: 2rem;
+    padding: 2rem;
+    background-color: rgb(57, 55, 55);
+    border-bottom: 3px solid black;
+
+    #play-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        height: fit-content;
+        width: fit-content;
+        padding: 0px;
+        border-radius: 10px;
+        background-color: rgb(77, 75, 75);
+
+        &:hover {
+            background-color: grey;
+        }
+    }
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    background: rgb(38, 36, 36);
+
+    .main-display-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 4rem;
+        padding: 2rem 0px;
+        background: rgb(38, 36, 36);
+    }
+
+    .answer-bubbles-div,
+    .example-bubbles-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 25rem;
+        height: 5rem;
+        gap: 1.5rem;
+        background: rgb(80, 76, 76);
+        border: 2px solid black;
+
+        .colored-bubble, .answer-bubble {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: black;
+
+
+        }
+
+        #red {
+            background-color: red;
+            cursor: pointer;
+        }
+
+        #green {
+            background-color: green;
+            cursor: pointer;
+        }
+
+        #blue {
+            background-color: blue;
+            cursor: pointer;
+        }
+
+        #yellow {
+            background-color: yellow;
+            cursor: pointer;
+        }
+
+        #white {
+            background-color: white;
+            cursor: pointer;
+        }
+    }
+}
+
+.winning-message-p {
+    display: flex;
+    font-size: 4rem;
+}
+
+.main-container-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
