@@ -1,17 +1,21 @@
-const cardAmount = 10;
+const cardAmount = 300;
 const mainDisplayDiv = document.querySelector(".main-display-div");
 const playButton = document.querySelector("#play-button");
-const cardsDiv = [];
-const currentlyReversedCards = [];
+const allCards = [];
+let cardDivByCardId = {};
+const currentlyRevealedCards = [];
 const correctPairs = []
+let currentId = 1;
 
 const createCards = function () {
+    correctPairs.length = 0;
     const cards = [];
     for (let i = 0; i < cardAmount / 2; i++) {
         for (let j = 0; j < 2; j++) {
             const card = {
+                id: currentId++,
                 image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${i + 1}.svg`,
-                value: i
+                value: i,
             }
             cards.push(card);
         }
@@ -27,13 +31,14 @@ const randomizeCards = function (cards) {
     return randomizedCards;
 }
 
-const displayCards = function (cards) {
+const initializeCardsDisplay = function (cards) {
     mainDisplayDiv.replaceChildren();
-    for (let card of cards) {
+    cardDivByCardId = {}
+    for (const card of cards) {
 
         const cardDiv = document.createElement('div');
         cardDiv.classList.add("card");
-        cardsDiv.push(cardDiv);
+        cardDivByCardId[card.id] = cardDiv;
 
         const cardImg = document.createElement('img');
         cardImg.classList.add("card-image");
@@ -43,9 +48,9 @@ const displayCards = function (cards) {
 
         const cardHiddenImg = document.createElement('img');
         cardHiddenImg.classList.add("card-hidden-image");
-        cardHiddenImg.src = "/images/mystery.png";
+        cardHiddenImg.src = "/Memory_Pokemon/images/mystery.png";
 
-        const cardDivEventListener = () => { onCardClick(card, cardDiv) }
+        const cardDivEventListener = () => { onCardClick(card) }
         cardDiv.addEventListener('click', cardDivEventListener)
         cardDiv.append(cardImg);
         cardDiv.append(cardHiddenImg);
@@ -54,67 +59,71 @@ const displayCards = function (cards) {
 }
 
 const initializeGame = function () {
-    const cards = createCards();
-    const randomizedCards = randomizeCards(cards);
-    displayCards(randomizedCards);
+    allCards.length = 0
+    allCards.push(...createCards());
+    const randomizedCards = randomizeCards(allCards);
+    initializeCardsDisplay(randomizedCards);
 }
 
 playButton.addEventListener('click', function () {
     initializeGame();
 })
 
-const onCardClick = function (card, cardDiv) {
-    reverseCard(card, cardDiv);
+const onCardClick = function (card) {
+    reverseCard(card);
 }
 
-const reverseCard = function (card, cardDiv) {
-    let cardImg = cardDiv.querySelector(".card-image");
-    let cardHiddenImg = cardDiv.querySelector(".card-hidden-image");
-    if (cardImg.classList.contains("hidden") && currentlyReversedCards.length < 2) {
-        console.log("je retourne les cartes")
-        console.log(card)
-        cardImg.classList.toggle("hidden");
-        cardHiddenImg.classList.toggle("hidden");
-        currentlyReversedCards.push({ card, cardImg, cardHiddenImg });
-        console.log(currentlyReversedCards.length)
-
-        if (currentlyReversedCards.length === 2) {
-            const isValidPair = checkValidPairs(currentlyReversedCards);
-            console.log("is valid pair = " + isValidPair)
-            if (isValidPair) {
-                correctPairs.push(currentlyReversedCards[0], currentlyReversedCards[1])
-                currentlyReversedCards.length = 0;
-                if (checkIfGameEnded()) {
-                    mainDisplayDiv.replaceChildren();
-                    const winningMessageP = document.createElement('p');
-                    winningMessageP.classList.add('winning-message-p');
-                    winningMessageP.textContent("YOU WON!")
-                    mainDisplayDiv.append(winningMessageP);
+const reverseCard = function (card) {
+    if (!isCardRevealed(card) && currentlyRevealedCards.length < 2) {
+        toggleCardHiddenClass(card);
+        currentlyRevealedCards.push(card);
+        if (currentlyRevealedCards.length === 2) {
+            if (isRevealedPairValid()) {
+                correctPairs.push(currentlyRevealedCards[0], currentlyRevealedCards[1])
+                currentlyRevealedCards.length = 0;
+                if (isGameEnded()) {
+                    displayGameEnd();
                 }
             } else {
-                console.log("j'attends 2000ms")
-                setTimeout(resetReversedCards, 1000, cardImg, cardHiddenImg);
+                setTimeout(resetWrongRevealedCards, 1000);
             }
         }
     }
 }
 
-const checkValidPairs = function (currentlyReversedCards) {
-    return currentlyReversedCards.length === 2 && currentlyReversedCards[0].card.value === currentlyReversedCards[1].card.value;
+const isCardRevealed = function (card) {
+    const cardDiv = cardDivByCardId[card.id]
+    const cardImg = cardDiv.querySelector(".card-image");
+    return !cardImg.classList.contains('hidden')
 }
 
-const resetReversedCards = function (cardImg, cardHiddenImg) {
-    console.log("je retire les cartes mauvaises");
-    for (let obj of currentlyReversedCards) {
-        obj.cardHiddenImg.classList.toggle("hidden");
-        obj.cardImg.classList.toggle("hidden");
+const toggleCardHiddenClass = function (card) {
+    const cardDiv = cardDivByCardId[card.id]
+    const cardImg = cardDiv.querySelector(".card-image");
+    const cardHiddenImg = cardDiv.querySelector(".card-hidden-image");
+    cardImg.classList.toggle("hidden");
+    cardHiddenImg.classList.toggle("hidden");
+}
+
+const isRevealedPairValid = function () {
+    return currentlyRevealedCards.length === 2 && currentlyRevealedCards[0].value === currentlyRevealedCards[1].value;
+}
+
+const resetWrongRevealedCards = function () {
+    for (const card of currentlyRevealedCards) {
+        toggleCardHiddenClass(card);
     }
-
-    currentlyReversedCards.length = 0;
+    currentlyRevealedCards.length = 0;
 }
 
-
-const checkIfGameEnded = function () {
-    return correctPairs.length === 10;
+const isGameEnded = function () {
+    return correctPairs.length === cardAmount;
 }
 
+const displayGameEnd = function () {
+    mainDisplayDiv.replaceChildren();
+    const winningMessageP = document.createElement('p');
+    winningMessageP.classList.add('winning-message-p');
+    winningMessageP.textContent = "YOU WON!";
+    mainDisplayDiv.append(winningMessageP);
+}
