@@ -99,5 +99,6 @@ main {
 
 .winning-message-p {
     display: flex;
+    color: whitesmoke;
     font-size: 4rem;
 }

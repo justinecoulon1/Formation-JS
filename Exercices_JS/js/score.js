@@ -139,7 +139,7 @@ const displayAllScores = function displayAllScores(allScoresArray) {
     winnersResult.textContent = winnersString;
     displayDiv.append(winnersResult);
 
-    displayDiv.append(resetButton)
+    displayDiv.append(resetButton);
 }
 
 const resetPage = function resetPage() {
@@ -151,7 +151,7 @@ const resetPage = function resetPage() {
     const playerAmountInput = document.createElement('input');
     const validateButton = createButton("images/validate.png", "validate_rounds");
     validateButton.classList.add("validate_rounds");
-    validateButton.addEventListener('click', validatePlayerRoundsEventListener)
+    validateButton.addEventListener('click', validatePlayerRoundsEventListener);
 
     roundAmountLabel.htmlFor = 'rounds';
     playerAmountLabel.htmlFor = 'players';
