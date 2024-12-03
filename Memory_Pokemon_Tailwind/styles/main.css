@@ -1,0 +1,104 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background: rgb(38, 36, 36);
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    gap: 2rem;
+    padding: 2rem;
+    background-color: rgb(57, 55, 55);
+    border-bottom: 3px solid black;
+
+    #play-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        height: fit-content;
+        width: fit-content;
+        padding: 0px;
+        border-radius: 10px;
+        background-color: rgb(77, 75, 75);
+
+        &:hover {
+            background-color: grey;
+        }
+    }
+
+    .difficulty-selector-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        color: black;
+        font-weight: bold;
+        font-size: 1.5rem;
+
+        .difficulty-selector {
+            background-color: grey;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+    }
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    background: rgb(38, 36, 36);
+
+    .main-display-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 4rem;
+        padding: 2rem 0px;
+        background: rgb(38, 36, 36);
+    }
+}
+
+.card {
+    height: fit-content;
+    width: fit-content;
+    border: 2px solid black;
+
+    img {
+        height: 20rem;
+        width: 20rem;
+    }
+
+    .card-hidden-image {
+        display: flex;
+        background-color: rgb(68, 66, 66);
+        border: 5px solid black;
+
+        &:hover {
+            background-color: rgb(105, 101, 101);
+        }
+    }
+
+    .card-image {
+        display: flex;
+        border: 5px solid black;
+    }
+
+    .hidden {
+        display: none;
+    }
+}
+
+.winning-message-p {
+    display: flex;
+    color: whitesmoke;
+    font-size: 4rem;
+}

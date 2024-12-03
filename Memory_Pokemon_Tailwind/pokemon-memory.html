@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Memory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            content: ["./*.html"],
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            '50': '#fefaec',
+                            '100': '#faf2cb',
+                            '200': '#f5e392',
+                            '300': '#efcf5a',
+                            '400': '#ebbb34',
+                            '500': '#e49e1c',
+                            '600': '#c67715',
+                            '700': '#a85815',
+                            '800': '#884418',
+                            '900': '#703917',
+                            '950': '#401c08',
+                        },
+                        secondary: {
+                            '50': '#fdf7ef',
+                            '100': '#fbecd9',
+                            '200': '#f6d5b2',
+                            '300': '#f1b880',
+                            '400': '#ea924d',
+                            '500': '#e4752b',
+                            '600': '#d65c20',
+                            '700': '#c14c1f',
+                            '800': '#8e381e',
+                            '900': '#72311c',
+                            '950': '#3e160c',
+                        },
+                        tertiary: {
+                            '50': '#f7f8f7',
+                            '100': '#f2f4f3',
+                            '200': '#d9dedb',
+                            '300': '#b7c2bb',
+                            '400': '#8fa197',
+                            '500': '#72857a',
+                            '600': '#5c6d64',
+                            '700': '#4b5951',
+                            '800': '#404c45',
+                            '900': '#39413d',
+                            '950': '#262b28',
+                        }
+                    }
+                }
+            },
+            darkMode: 'class',
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            .main-display-div {
+                @apply content-center flex-wrap gap-6 p-5
+            }
+
+            .header {
+                @apply bg-primary-950 border-primary-900
+                dark:bg-black dark:border-white
+                content-center p-10 gap-6 border-b-2
+            }
+
+            .main {
+                @apply bg-secondary-200 
+                dark:bg-gray-700
+                content-center
+            }
+
+        }
+        @layer components {
+            .difficulty-selector-div {
+                @apply gap-5
+            }
+            .difficulty-selector-label {
+                @apply text-primary-100
+                dark:text-white
+            }
+            .difficulty-selector {
+                @apply text-primary-100 bg-primary-950 border-primary-900 focus:border-secondary-300
+                dark:text-white dark:bg-black dark:border-gray-600
+                focus:outline-none 
+                border-solid  border-b-2
+            }
+            .btn {
+                @apply bg-primary-900 hover:bg-primary-100 hover:border-primary-100
+                rounded-lg 
+                border-2 border-primary-800
+                dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-white dark:hover:border-white
+            }
+            .card-image {
+                @apply h-60 w-60
+            }
+            .card-hidden-image {
+                @apply h-60 w-60
+            }
+            .card {
+                @apply border-primary-950 
+                dark:border-white
+                border-solid border-4 
+                h-72 w-72 
+                content-center
+            }
+            .winning-message-p {
+                @apply text-primary-900 text-4xl
+                dark:text-white;
+            }
+            .dark-mode-button {
+                @apply border-2 border-primary-100 p-2 rounded-full
+                dark:border-white
+            }
+        }
+        @layer utilities {
+            .content-center {
+                @apply flex justify-center items-center;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-secondary-200 dark:bg-gray-700">
+    <header class="header">
+        <div class="absolute left-10">
+            <button class="btn dark-mode-button">
+                <img src="./images/night-mode.png" alt="">
+            </button>
+        </div>
+        <div class="difficulty-selector-div content-center">
+            <label class="difficulty-selector-label" for="difficulty-selector">Difficulty: </label>
+            <select class="difficulty-selector" name="difficulty-selector" id="difficulty-selector">
+                <option class="option" value="10">Easy</option>
+                <option value="20">Medium</option>
+                <option value="30">Hard</option>
+            </select>
+        </div>
+        <button class="btn" id="play-button"><img draggable="false" src="images/play.png" alt="play"></button>
+    </header>
+    <main class="main">
+        <div class="main-display-div"></div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
