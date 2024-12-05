@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            '50': '#fcf3f6',
+                            '100': '#fae9f0',
+                            '200': '#f7d3e0',
+                            '300': '#f2afc6',
+                            '400': '#e87ea0',
+                            '500': '#de5d83',
+                            '600': '#ca385c',
+                            '700': '#af2745',
+                            '800': '#912339',
+                            '900': '#792234',
+                            '950': '#490e19',
+                        },
+                        secondary: {
+                            '50': '#eff5ff',
+                            '100': '#dae7ff',
+                            '200': '#c9ddff',
+                            '300': '#91bdff',
+                            '400': '#5e99fc',
+                            '500': '#3873f9',
+                            '600': '#2253ee',
+                            '700': '#1a3fdb',
+                            '800': '#1c34b1',
+                            '900': '#1c318c',
+                            '950': '#161f55',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            h2 {
+                @apply text-primary-700 text-xl font-bold;
+                font-style: italic;
+             }
+        }
+        @layer components {
+            .btn {
+                @apply 
+                bg-secondary-100 hover:bg-secondary-700 
+                text-secondary-700 hover:text-secondary-100 
+                px-4 py-2 
+                rounded-md w-fit block;
+            }
+        }
+        @layer utilities {
+            .content-center {
+                @apply flex justify-center items-center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header
+        class="bg-primary-700 md:bg-blue-700 lg:bg-emerald-700 dark:bg-gray-200 text-primary-100 flex justify-between items-center py-4">
+        <h1 class="text-4xl ">Mon site</h1>
+        <nav class="flex">
+            <ul class="flex items-center gap-6">
+                <li><a href="">Home</a></li>
+                <li><a href="">About</a></li>
+                <li><a href="">Contact</a></li>
+            </ul>
+            <button class="mx-6 btn">
+                Log in
+            </button>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Coucou</h2>
+            <a class="btn my-2">Bouton</a>
+        </section>
+    </main>
+
+</body>
+
+</html>

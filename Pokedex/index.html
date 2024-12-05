@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            content: ["./*.html"],
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                        },
+                        secondary: {
+                        },
+                        tertiary: {
+                        }
+                    }
+                }
+            },
+            darkMode: 'class',
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            header{
+                @apply flex h-44 w-full items-center
+                p-10
+                bg-red-800
+                dark:bg-blue-950
+            }
+            .header-container {
+                @apply flex h-full w-full 
+            }
+            .header-element-container{
+                @apply flex h-full w-full items-center justify-evenly
+                dark:text-white
+            }
+        }
+        @layer components {
+            .dark-mode-img {
+                @apply h-12 w-12
+            }
+            .dark-mode-btn {
+                @apply absolute right-10 bg-gray-600 rounded-3xl
+            }
+            .logo-img {
+                @apply h-20 w-20
+            }
+        }
+        @layer utilities {
+            .content-center {
+                @apply flex justify-center items-center;
+            }
+        }
+    </style>
+    <script src="/Pokedex/js/main.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-element-container">
+                <button class="header-btn logo-btn"><img class="logo-img" src="images/pokeball_light.png"
+                        alt="logo"></button>
+            </div>
+            <div class="header-element-container">
+                <p>POKEDEX</p>
+            </div>
+            <div class="header-element-container">
+                <button class="header-btn dark-mode-btn" id="dark-mode-btn"><img class="dark-mode-img"
+                        src="images/dark_mode.png" alt="dark mode"></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="poke-list">
+        </section>
+    </main>
+</body>
+
+</html>
