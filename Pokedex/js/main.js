@@ -25,7 +25,7 @@ const DARK_MODE_HANDLING = {
 DARK_MODE_HANDLING.darkModeBtn.addEventListener('click', DARK_MODE_HANDLING.darkModeButtonHandler());
 
 const DOM = {
-    pokemonList: document.querySelector(".poke-list")
+    pokemonList: document.querySelector(".pokemon-list")
 }
 
 const POKEAPI_VARIABLES = {
@@ -60,7 +60,6 @@ const EXTRACT_DATA = {
 const RENDERERS = {
     initDisplay: async function () {
         let POKEMON_NAMES = await EXTRACT_DATA.getPokemonNameList();
-        console.log(POKEMON_NAMES)
         this.createPokemonNameDiv(POKEMON_NAMES);
     },
     createPokemonNameDiv: function (POKEMON_NAMES) {

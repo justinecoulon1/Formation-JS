@@ -27,18 +27,31 @@
     </script>
     <style type="text/tailwindcss">
         @layer base {
-            header{
+            header {
                 @apply flex h-44 w-full items-center
                 p-10
                 bg-red-800
                 dark:bg-blue-950
             }
+            main {
+                @apply flex p-24
+            }
             .header-container {
                 @apply flex h-full w-full 
             }
-            .header-element-container{
+            .header-element-container {
                 @apply flex h-full w-full items-center justify-evenly
                 dark:text-white
+            }
+            .pokedex {
+                @apply flex 
+                shadow-lg shadow-black w-full
+            }
+            .pokemon-display {
+                @apply flex w-3/4
+            }
+            .pokemon-list {
+                @apply w-1/4
             }
         }
         @layer components {
@@ -79,7 +92,11 @@
     </header>
 
     <main>
-        <section class="poke-list">
+        <section class="pokedex">
+            <section class="pokemon-display">
+            </section>
+            <section class="pokemon-list">
+            </section>
         </section>
     </main>
 </body>
