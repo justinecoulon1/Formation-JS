@@ -38,9 +38,9 @@ const API_CALLS = {
             let response = await fetch(POKEAPI_VARIABLES.URL);
             let data = await response.json();
             return data;
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
+            return [];
         }
     }
 }
@@ -48,28 +48,31 @@ const API_CALLS = {
 const EXTRACT_DATA = {
     getPokemonNameList: async function () {
         const pokemonNamesData = await API_CALLS.getPokemonList();
-        const POKEMON_NAMES = [];
+        const pokemonNames = [];
         pokemonNamesData.results.forEach(element => {
-            POKEMON_NAMES.push(element.name);
+            pokemonNames.push(element.name);
         });
-        console.log(POKEMON_NAMES)
-        return POKEMON_NAMES;
+        console.log(pokemonNames)
+        return pokemonNames;
     }
 }
 
 const RENDERERS = {
     initDisplay: async function () {
-        let POKEMON_NAMES = await EXTRACT_DATA.getPokemonNameList();
-        this.createPokemonNameDiv(POKEMON_NAMES);
+        const pokemonNames = await EXTRACT_DATA.getPokemonNameList();
+        this.createPokemonNamesDivs(pokemonNames);
     },
-    createPokemonNameDiv: function (POKEMON_NAMES) {
-        for (const name of POKEMON_NAMES) {
-            const div = document.createElement('div');
-            const p = document.createElement('p');
-            p.textContent = name;
-            div.append(p)
-            DOM.pokemonList.append(div);
+    createPokemonNamesDivs: function (pokemonNames) {
+        for (const name of pokemonNames) {
+            this.createPokemonNameDiv(name);
         }
+    },
+    createPokemonNameDiv: function (pokemonName) {
+        const div = document.createElement('div');
+        const p = document.createElement('p');
+        p.textContent = pokemonName;
+        div.append(p);
+        DOM.pokemonList.append(div);
     }
 }
 
@@ -78,3 +81,19 @@ const HANDLERS = {
 }
 
 RENDERERS.initDisplay();
+
+// const fonctionA = () => {
+//     fonctionB()
+// }
+
+// const fonctionB = () => {
+//     fonctionC()
+// }
+
+// const fonctionC = () => {
+//     API_CALLS.getPokemonList().then(pokemonList => {
+
+//     }).catch(err => {
+
+//     }) 
+// }

@@ -45,7 +45,6 @@ function preparer() {
             }
         }, 3000)
     })
-    
 }
 
 function cuire() {
