@@ -7,6 +7,18 @@
     <title>Pokedex</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@300..700&family=Rasa:ital,wght@0,300..700;1,300..700&display=swap"
+        rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chewy&family=Finger+Paint&family=Fredoka:wght@300..700&family=Rasa:ital,wght@0,300..700;1,300..700&display=swap"
+        rel="stylesheet">
+
     <script>
         tailwind.config = {
             content: ["./*.html"],
@@ -19,6 +31,17 @@
                         },
                         tertiary: {
                         }
+                    },
+                    borderWidth: {
+                        '10': '10px',
+                        '12': '12px',
+                        '14': '14px',
+                        '16': '16px',
+                        '18': '18px',
+                        '20': '20px',
+                    },
+                    fontFamily: {
+                        chewy: ['"Chewy Font"']
                     }
                 }
             },
@@ -28,13 +51,14 @@
     <style type="text/tailwindcss">
         @layer base {
             header {
-                @apply flex h-44 w-full items-center
-                p-10
-                bg-red-800
-                dark:bg-blue-950
+                @apply flex items-center h-44 w-full p-10
+                shadow-lg shadow-rose-950 dark:shadow-black
+                bg-red-800 dark:bg-blue-950
+                chewy-regular text-5xl
             }
             main {
-                @apply flex p-24
+                @apply flex justify-center p-16 
+                dark:bg-gray-600
             }
             .header-container {
                 @apply flex h-full w-full 
@@ -44,14 +68,84 @@
                 dark:text-white
             }
             .pokedex {
-                @apply flex 
-                shadow-lg shadow-black w-full
-            }
-            .pokemon-display {
                 @apply flex w-3/4
+                border-14 border-red-700 dark:border-blue-950 rounded-3xl
+                shadow-2xl shadow-black 
+            }
+            .display-container {
+                @apply flex w-full p-5
+                border-4 border-black rounded-lg
             }
             .pokemon-list {
-                @apply w-1/4
+                @apply flex flex-col w-1/3 py-1 px-5 gap-1
+                border-l-2
+            }
+            .pokemon-name-div {
+                @apply flex p-1 
+                even:bg-red-700/40
+                dark:even:bg-blue-950/60
+                dark:text-white finger-paint-regular
+                even:shadow-lg
+                cursor-pointer
+            }
+            .currently-selected-name-div {
+                @apply
+                bg-red-700/60
+                even:bg-red-700/70
+                dark:bg-blue-900/70
+                dark:even:bg-blue-800/60
+                border-2 border-red-950 dark:border-blue-950
+            }
+
+            .pokemon-display {
+                @apply flex flex-col w-2/3 py-1 px-5
+            }
+            .pokemon-display-basic-info-div {
+                @apply flex flex-col w-full h-1/5
+            }                  
+            .pokemon-display-name-div {
+                @apply flex content-center h-1/2 p-2 
+                chewy-regular text-3xl
+                dark:text-white
+            }      
+            .pokemon-display-types-div {
+                @apply flex h-1/2 p-2
+            }
+            .pokemon-display-type {
+                @apply flex content-center w-1/2 p-2 gap-2
+            }
+            .pokemon-type-name {
+                @apply 
+                dark:text-white finger-paint-regular
+            }
+            .pokemon-type-icon {
+                @apply w-8
+            }
+            .pokemon-display-image-div {
+                @apply flex h-2/5 p-2
+            }
+            .pokemon-front-sprite-div {
+                @apply flex content-center w-1/2 p-4
+            }
+            .pokemon-back-sprite-div {
+                @apply flex content-center w-1/2 p-4
+            }
+            .pokemon-display-information {
+                @apply flex flex-col h-2/5 p-2 gap-3
+                dark:text-white
+            }
+            .pokemon-sprite {
+                @apply h-full
+                shadow-md
+            }
+            .stats-title {
+                @apply 
+               chewy-regular text-xl 
+                border-b-2 border-black dark:border-white
+            }
+            .stat-text {
+                @apply 
+                finger-paint-regular
             }
         }
         @layer components {
@@ -59,7 +153,9 @@
                 @apply h-12 w-12
             }
             .dark-mode-btn {
-                @apply absolute right-10 bg-gray-600 rounded-3xl
+                @apply absolute right-10
+                bg-gray-600 
+                rounded-3xl
             }
             .logo-img {
                 @apply h-20 w-20
@@ -68,6 +164,16 @@
         @layer utilities {
             .content-center {
                 @apply flex justify-center items-center;
+            }
+            .chewy-regular {
+                font-family: "Chewy", system-ui;
+                font-weight: 400;
+                font-style: normal;
+            }
+            .finger-paint-regular {
+                font-family: "Finger Paint", serif;
+                font-weight: 400;
+                font-style: normal;
             }
         }
     </style>
@@ -82,7 +188,7 @@
                         alt="logo"></button>
             </div>
             <div class="header-element-container">
-                <p>POKEDEX</p>
+                <h1>Pokedex</h1>
             </div>
             <div class="header-element-container">
                 <button class="header-btn dark-mode-btn" id="dark-mode-btn"><img class="dark-mode-img"
@@ -93,9 +199,31 @@
 
     <main>
         <section class="pokedex">
-            <section class="pokemon-display">
-            </section>
-            <section class="pokemon-list">
+            <section class="display-container">
+                <section class="pokemon-display">
+                    <div class="pokemon-display-basic-info-div">
+                        <div class="pokemon-display-name-div">
+                        </div>
+                        <div class="pokemon-display-types-div">
+                            <div class="pokemon-display-type">
+                                <img class="pokemon-type-icon" id="pokemon-type1-icon" src="">
+                                <p class="pokemon-type-name" id="pokemon-type1-name"></p>
+                            </div>
+                            <div class="pokemon-display-type">
+                                <img class="pokemon-type-icon" id="pokemon-type2-icon" src="">
+                                <p class="pokemon-type-name" id="pokemon-type2-name"> </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pokemon-display-image-div">
+                        <div class="pokemon-front-sprite-div"></div>
+                        <div class="pokemon-back-sprite-div"></div>
+                    </div>
+                    <div class="pokemon-display-information"></div>
+
+                </section>
+                <section class="pokemon-list">
+                </section>
             </section>
         </section>
     </main>
