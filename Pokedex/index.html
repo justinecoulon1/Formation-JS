@@ -26,11 +26,10 @@
                 extend: {
                     colors: {
                         primary: {
+                            "pink":"#FF3060"
                         },
                         secondary: {
                         },
-                        tertiary: {
-                        }
                     },
                     borderWidth: {
                         '10': '10px',
@@ -68,7 +67,7 @@
                 dark:text-white
             }
             .pokedex {
-                @apply flex w-3/4
+                @apply flex w-2/3
                 border-14 border-red-700 dark:border-blue-950 rounded-3xl
                 shadow-2xl shadow-black 
             }
@@ -87,6 +86,7 @@
                 dark:text-white finger-paint-regular
                 even:shadow-lg
                 cursor-pointer
+                select-none
             }
             .currently-selected-name-div {
                 @apply
@@ -98,21 +98,22 @@
             }
 
             .pokemon-display {
-                @apply flex flex-col w-2/3 py-1 px-5
+                @apply flex flex-col w-2/3 py-1 px-5 
+                select-none
             }
             .pokemon-display-basic-info-div {
-                @apply flex flex-col w-full h-1/5
+                @apply flex flex-col content-center w-full h-1/5 
             }                  
             .pokemon-display-name-div {
-                @apply flex content-center h-1/2 p-2 
+                @apply flex content-center h-1/2 p-2 gap-2
                 chewy-regular text-3xl
                 dark:text-white
             }      
             .pokemon-display-types-div {
-                @apply flex h-1/2 p-2
+                @apply flex w-full h-1/2 p-2 content-center
             }
             .pokemon-display-type {
-                @apply flex content-center w-1/2 p-2 gap-2
+                @apply flex content-center p-2 gap-2
             }
             .pokemon-type-name {
                 @apply 
@@ -130,22 +131,45 @@
             .pokemon-back-sprite-div {
                 @apply flex content-center w-1/2 p-4
             }
-            .pokemon-display-information {
-                @apply flex flex-col h-2/5 p-2 gap-3
-                dark:text-white
-            }
             .pokemon-sprite {
                 @apply h-full
                 shadow-md
+                border-4 border-transparent rounded-3xl
+            }            
+            .pokemon-display-information {
+                @apply flex p-2 gap-3
+                dark:text-white
+            }
+            .pokemon-stats-div {
+                @apply flex flex-col w-2/5 p-2 gap-3
+            }
+            .pokemon-info-div {
+                @apply flex flex-col w-3/5 p-2 gap-3
             }
             .stats-title {
                 @apply 
                chewy-regular text-xl 
                 border-b-2 border-black dark:border-white
             }
-            .stat-text {
-                @apply 
+            .stat-div {
+                @apply flex items-center 
                 finger-paint-regular
+            } 
+            .stat-name {
+                @apply flex w-5/6 whitespace-nowrap object-contain
+                finger-paint-regular
+            }            
+            .stat-amount {
+                @apply flex
+                finger-paint-regular
+            }
+            .shiny-btn {
+                @apply p-2 border-4 border-primary-pink rounded-full
+                hover:bg-primary-pink/20
+            }
+            .shiny-mode-selected {
+                @apply bg-primary-pink/15
+                dark:bg-primary-pink/25
             }
         }
         @layer components {
@@ -174,6 +198,10 @@
                 font-family: "Finger Paint", serif;
                 font-weight: 400;
                 font-style: normal;
+            }
+            .btn {
+                @apply 
+                cursor-pointer
             }
         }
     </style>
@@ -205,22 +233,18 @@
                         <div class="pokemon-display-name-div">
                         </div>
                         <div class="pokemon-display-types-div">
-                            <div class="pokemon-display-type">
-                                <img class="pokemon-type-icon" id="pokemon-type1-icon" src="">
-                                <p class="pokemon-type-name" id="pokemon-type1-name"></p>
-                            </div>
-                            <div class="pokemon-display-type">
-                                <img class="pokemon-type-icon" id="pokemon-type2-icon" src="">
-                                <p class="pokemon-type-name" id="pokemon-type2-name"> </p>
-                            </div>
                         </div>
                     </div>
                     <div class="pokemon-display-image-div">
-                        <div class="pokemon-front-sprite-div"></div>
-                        <div class="pokemon-back-sprite-div"></div>
+                        <div class="pokemon-front-sprite-div">
+                        </div>
+                        <div class="pokemon-back-sprite-div">
+                        </div>
                     </div>
-                    <div class="pokemon-display-information"></div>
-
+                    <div class="pokemon-display-information">
+                        <div class="pokemon-stats-div"></div>
+                        <div class="pokemon-info-div"></div>
+                    </div>
                 </section>
                 <section class="pokemon-list">
                 </section>
