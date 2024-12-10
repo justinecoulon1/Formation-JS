@@ -68,7 +68,7 @@ const POKEAPI_VARIABLES = {
 }
 
 const API_CALLS = {
-    getRequest: async function(url) {
+    fetchJson: async function(url) {
         try {
             let response = await fetch(url);
             let data = await response.json();
@@ -78,14 +78,14 @@ const API_CALLS = {
             return [];
         }
     },
-    getPokemonList: async function () {
-       return await API_CALLS.getRequest(POKEAPI_VARIABLES.pokemonListUrl);
+    getPokemonList: function () {
+       return API_CALLS.fetchJson(POKEAPI_VARIABLES.pokemonListUrl);
     },
-    getPokemonInfo: async function (pokemonUrl) {
-        return await API_CALLS.getRequest(pokemonUrl);
+    getPokemonInfo: function (pokemonUrl) {
+        return API_CALLS.fetchJson(pokemonUrl);
     },
-    getPokemonGenderDetails: async function (pokemonGenderUrl) {
-        return await API_CALLS.getRequest(pokemonGenderUrl);
+    getPokemonGenderDetails: function (pokemonGenderUrl) {
+        return API_CALLS.fetchJson(pokemonGenderUrl);
     },
 }
 
@@ -120,8 +120,6 @@ const EXTRACT_DATA = {
         return baseStats;
     },
     initPokemonGenderDetails: async function () {
-        console.log("start init pokemon gender details");
-        
         const pokemonFemaleGenderDetails = await API_CALLS.getPokemonGenderDetails(POKEAPI_VARIABLES.femalePokemonListUrl);
         const pokemonMaleGenderDetails = await API_CALLS.getPokemonGenderDetails(POKEAPI_VARIABLES.malePokemonListUrl);
         const pokemonGenderlessGenderDetails = await API_CALLS.getPokemonGenderDetails(POKEAPI_VARIABLES.genderlessPokemonListUrl);
@@ -129,8 +127,6 @@ const EXTRACT_DATA = {
         EXTRACT_DATA.initPokemonGenderDetailsByName(pokemonFemaleGenderDetails, GENDER_VARIABLES.female);
         EXTRACT_DATA.initPokemonGenderDetailsByName(pokemonMaleGenderDetails, GENDER_VARIABLES.male);
         EXTRACT_DATA.initPokemonGenderDetailsByName(pokemonGenderlessGenderDetails, GENDER_VARIABLES.genderless);
-        
-        console.log("end init pokemon gender details");
     },
     initPokemonGenderDetailsByName: async function (genderDetails, genderVariable) {
         for (let genderDetail of genderDetails.pokemon_species_details) {
@@ -164,8 +160,6 @@ const RENDERERS = {
         const pokemons = await EXTRACT_DATA.getPokemons();
         COMPONENT_GENERATOR.createPokemonNamesDivs(pokemons);
         RENDERERS.displayPokemon(EXTRACT_DATA.pokemons[0].name, CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDivs[0]);
-        
-        console.log("end init display ");
     },
     resetDisplay: function () {
         DOM.pokemonDisplayNameDiv.replaceChildren();
@@ -428,12 +422,14 @@ const HANDLERS = {
             RENDERERS.initDisplay();
         }
     }
-}
+};
 
-EXTRACT_DATA.initPokemonGenderDetails();
-DOM.downArrowBtn.addEventListener('click', HANDLERS.arrowBtnEventListener);
-DOM.upArrowBtn.addEventListener('click', HANDLERS.arrowBtnEventListener);
-RENDERERS.initDisplay();
+(async () => {
+    await EXTRACT_DATA.initPokemonGenderDetails();
+    DOM.downArrowBtn.addEventListener('click', HANDLERS.arrowBtnEventListener);
+    DOM.upArrowBtn.addEventListener('click', HANDLERS.arrowBtnEventListener);
+    RENDERERS.initDisplay();
+})();
 
 
 
