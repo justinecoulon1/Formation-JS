@@ -338,12 +338,12 @@ const COMPONENT_GENERATOR = {
             const genderImg = document.createElement('img');
             genderImg.classList.add('gender-img');
             genderImg.src = gender.gender.image;
-            genderImg.title = gender.gender.label
-            genderDiv.append(genderImg)
+            genderImg.title = gender.gender.label;
+            genderDiv.append(genderImg);
         }
 
         gendersGlobalDiv.append(genderDiv);
-        DOM.pokemonInfoDiv.append(gendersGlobalDiv)
+        DOM.pokemonInfoDiv.append(gendersGlobalDiv);
     },
     createMeasurementsDiv: function () {
         const measurementsDiv = document.createElement('div');
@@ -357,8 +357,8 @@ const COMPONENT_GENERATOR = {
         const weightTitle = document.createElement('p');
         heightTitle.classList.add("height-title");
         weightTitle.classList.add("weight-title");
-        heightTitle.textContent = "HEIGHT:"
-        weightTitle.textContent = "WEIGHT:"
+        heightTitle.textContent = "HEIGHT:";
+        weightTitle.textContent = "WEIGHT:";
 
         const heightValue = document.createElement('p');
         const weightValue = document.createElement('p');
@@ -369,9 +369,9 @@ const COMPONENT_GENERATOR = {
 
         heightDiv.append(heightTitle, heightValue);
         weightDiv.append(weightTitle, weightValue);
-        measurementsDiv.append(heightDiv, weightDiv)
+        measurementsDiv.append(heightDiv, weightDiv);
 
-        DOM.pokemonInfoDiv.append(measurementsDiv)
+        DOM.pokemonInfoDiv.append(measurementsDiv);
     },
 }
 
@@ -419,13 +419,13 @@ const HANDLERS = {
             CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset -= 20;
             RENDERERS.emptyPokemonList();
             POKEAPI_VARIABLES.updatePokeApiUrl();
-            RENDERERS.initDisplay()
+            RENDERERS.initDisplay();
         } 
         if (e.currentTarget.id === "down-arrow-btn") {
             CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset += 20;
             RENDERERS.emptyPokemonList();
             POKEAPI_VARIABLES.updatePokeApiUrl();
-            RENDERERS.initDisplay()
+            RENDERERS.initDisplay();
         }
     }
 }
