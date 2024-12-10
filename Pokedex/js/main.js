@@ -2,14 +2,20 @@ const DARK_MODE_HANDLING = {
     darkModeBtn: document.querySelector('#dark-mode-btn'),
     logoImg: document.querySelector('.logo-img'),
     darkModeImg: document.querySelector('.dark-mode-img'),
+    upArrowImg: document.querySelector('#up-arrow-img'),
+    downArrowImg: document.querySelector('#down-arrow-img'),
 
     toggleDarkModeImg: function () {
-        this.logoImg.src = "images/pokeball_dark.png"
-        this.darkModeImg.src = "images/light_mode.png"
+        this.logoImg.src = "images/pokeball_dark.png";
+        this.darkModeImg.src = "images/light_mode.png";
+        this.upArrowImg.src = "images/up-arrow-dark.png";
+        this.downArrowImg.src = "images/down-arrow-dark.png";
     },
     toggleLightModeImg: function () {
-        this.logoImg.src = "images/pokeball_light.png"
-        this.darkModeImg.src = "images/dark_mode.png"
+        this.logoImg.src = "images/pokeball_light.png";
+        this.darkModeImg.src = "images/dark_mode.png";
+        this.upArrowImg.src = "images/up-arrow.png";
+        this.downArrowImg.src = "images/down-arrow.png";
     },
     darkModeButtonHandler: function () {
         return function () {
@@ -38,20 +44,33 @@ const DOM = {
     pokemonInfoDiv: document.querySelector(".pokemon-info-div"),
     pokemonShinyButton: "",
     pokemonFrontSpriteImg: document.querySelector("#pokemon-front-sprite"),
-    pokemonBackSpriteImg: document.querySelector("#pokemon-back-sprite")
+    pokemonBackSpriteImg: document.querySelector("#pokemon-back-sprite"),
+    upArrowBtn: document.querySelector('#up-arrow-btn'),
+    downArrowBtn: document.querySelector('#down-arrow-btn'),
+}
+
+const CURRENTLY_DISPLAYED_POKEMON_VARIABLES = {
+    nameDiv: "",
+    nameDivs: [],
+    pokemonInfos: "",
+    currentPageOffset: 0,
 }
 
 const POKEAPI_VARIABLES = {
-    pokemonListUrl: "https://pokeapi.co/api/v2/pokemon?offset=375&limit=20",
+    pokemonListUrl: `https://pokeapi.co/api/v2/pokemon?offset=${CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset}&limit=20`,
     femalePokemonListUrl: "https://pokeapi.co/api/v2/gender/1",
     malePokemonListUrl: "https://pokeapi.co/api/v2/gender/2",
     genderlessPokemonListUrl: "https://pokeapi.co/api/v2/gender/3",
+    
+    updatePokeApiUrl: function () {
+        POKEAPI_VARIABLES.pokemonListUrl =  `https://pokeapi.co/api/v2/pokemon?offset=${CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset}&limit=20`
+    }
 }
 
 const API_CALLS = {
-    getPokemonList: async function () {
+    getRequest: async function(url) {
         try {
-            let response = await fetch(POKEAPI_VARIABLES.pokemonListUrl);
+            let response = await fetch(url);
             let data = await response.json();
             return data;
         } catch (error) {
@@ -59,25 +78,14 @@ const API_CALLS = {
             return [];
         }
     },
-    getPokemonInfo: async function (pokemonUrl) {
-        try {
-            let response = await fetch(pokemonUrl);
-            let data = await response.json();
-            return data;
-        } catch (error) {
-            console.log(error)
-            return [];
-        }
+    getPokemonList: async function () {
+       return await API_CALLS.getRequest(POKEAPI_VARIABLES.pokemonListUrl);
     },
-    getPokemonGenderDetails: async function(pokemonGenderUrl) {
-        try {
-            let response = await fetch(pokemonGenderUrl);
-            let data = await response.json();
-            return data;
-        } catch (error) {
-            console.log(error)
-            return [];
-        }
+    getPokemonInfo: async function (pokemonUrl) {
+        return await API_CALLS.getRequest(pokemonUrl);
+    },
+    getPokemonGenderDetails: async function (pokemonGenderUrl) {
+        return await API_CALLS.getRequest(pokemonGenderUrl);
     },
 }
 
@@ -111,33 +119,53 @@ const EXTRACT_DATA = {
         pokemonStats.forEach(stat => { baseStats.push({ name: stat.stat.name, base: stat.base_stat }) });
         return baseStats;
     },
-    getPokemonGenderDetails: async function(){
+    initPokemonGenderDetails: async function () {
+        console.log("start init pokemon gender details");
+        
         const pokemonFemaleGenderDetails = await API_CALLS.getPokemonGenderDetails(POKEAPI_VARIABLES.femalePokemonListUrl);
         const pokemonMaleGenderDetails = await API_CALLS.getPokemonGenderDetails(POKEAPI_VARIABLES.malePokemonListUrl);
         const pokemonGenderlessGenderDetails = await API_CALLS.getPokemonGenderDetails(POKEAPI_VARIABLES.genderlessPokemonListUrl);
 
-        GLOBAL_CACHED_VARIABLES.femaleGenderDetailsByPokemonName = await EXTRACT_DATA.getPokemonGenderDetailsByName(pokemonFemaleGenderDetails.pokemon_species_details);
-        GLOBAL_CACHED_VARIABLES.maleGenderDetailsByPokemonName = await EXTRACT_DATA.getPokemonGenderDetailsByName(pokemonMaleGenderDetails.pokemon_species_details);
-        GLOBAL_CACHED_VARIABLES.genderlessGenderDetailsByPokemonName = await EXTRACT_DATA.getPokemonGenderDetailsByName(pokemonGenderlessGenderDetails.pokemon_species_details);
-    },
-    getPokemonGenderDetailsByName: async function(pokemonGenderDetails) {
-        const pokemonGenderDetailsByName = {};
-        for (let pokemonGenderDetail of pokemonGenderDetails) {
-            pokemonGenderDetailsByName[pokemonGenderDetail.pokemon_species.name] = pokemonGenderDetail
-        }
-        return pokemonGenderDetailsByName;
-    },
-    getPokemonGenderInfos: async function(currentPokemonName) {
-        const pokemonGenderInfos = {};
+        EXTRACT_DATA.initPokemonGenderDetailsByName(pokemonFemaleGenderDetails, GENDER_VARIABLES.female);
+        EXTRACT_DATA.initPokemonGenderDetailsByName(pokemonMaleGenderDetails, GENDER_VARIABLES.male);
+        EXTRACT_DATA.initPokemonGenderDetailsByName(pokemonGenderlessGenderDetails, GENDER_VARIABLES.genderless);
         
-
-    }
+        console.log("end init pokemon gender details");
+    },
+    initPokemonGenderDetailsByName: async function (genderDetails, genderVariable) {
+        for (let genderDetail of genderDetails.pokemon_species_details) {
+            genderDetail.gender = genderVariable;
+            if (GLOBAL_CACHED_VARIABLES.pokemonGenderDetailsByName[genderDetail.pokemon_species.name]) {
+                GLOBAL_CACHED_VARIABLES.pokemonGenderDetailsByName[genderDetail.pokemon_species.name].push(genderDetail);
+            } else {
+                GLOBAL_CACHED_VARIABLES.pokemonGenderDetailsByName[genderDetail.pokemon_species.name] = [genderDetail];
+            }
+        }
+    },
+    getPokemonGenderDetails: async function (currentPokemonName) {
+        return GLOBAL_CACHED_VARIABLES.pokemonGenderDetailsByName[currentPokemonName];
+    },
+    getPokemonSpeciesName: async function (currentPokemonInfos) {
+        return currentPokemonInfos.species.name;
+    },
+    getPokemonHeight: function() {
+        const pokemonHeight = CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos.height * 0.1;
+        return pokemonHeight.toFixed(1);
+    },
+    getPokemonWeight: function() {
+        const pokemonWeight = CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos.weight * 0.1;
+        return pokemonWeight.toFixed(1);
+    },
 }
 
 const RENDERERS = {
     initDisplay: async function () {
+        RENDERERS.resetDisplay()
         const pokemons = await EXTRACT_DATA.getPokemons();
         COMPONENT_GENERATOR.createPokemonNamesDivs(pokemons);
+        RENDERERS.displayPokemon(EXTRACT_DATA.pokemons[0].name, CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDivs[0]);
+        
+        console.log("end init display ");
     },
     resetDisplay: function () {
         DOM.pokemonDisplayNameDiv.replaceChildren();
@@ -147,12 +175,33 @@ const RENDERERS = {
         DOM.pokemonStatsDiv.replaceChildren();
         DOM.pokemonInfoDiv.replaceChildren();
     },
-    toggleCurrentlySelectedPokemonClass: function (e) {
+    emptyPokemonList: function() {
+        DOM.pokemonList.replaceChildren();
+    },
+    toggleCurrentlySelectedPokemonClass: function (currentlySelectedNameDiv) {
         if (CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDiv) {
             CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDiv.classList.toggle('currently-selected-name-div');
         }
-        e.currentTarget.classList.toggle('currently-selected-name-div');
-        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDiv = e.currentTarget;
+        currentlySelectedNameDiv.classList.toggle('currently-selected-name-div');
+        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDiv = currentlySelectedNameDiv;
+    },
+    displayPokemon: async function(currentPokemonName, currentlySelectedNameDiv) {
+        RENDERERS.toggleCurrentlySelectedPokemonClass(currentlySelectedNameDiv);
+
+        const currentPokemonUrl = EXTRACT_DATA.getPokemonUrl(currentPokemonName);
+        const currentPokemonInfos = await EXTRACT_DATA.getPokemonInfos(currentPokemonUrl);
+        const currentPokemonSpeciesName = await EXTRACT_DATA.getPokemonSpeciesName(currentPokemonInfos);
+        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos = currentPokemonInfos;
+        const currentPokemonSprites = await EXTRACT_DATA.getPokemonSprites(currentPokemonInfos);
+        const pokemonTypes = await EXTRACT_DATA.getPokemonTypes(currentPokemonInfos);
+        const currentPokemonStats = await EXTRACT_DATA.getPokemonStats(currentPokemonInfos);
+        const currentPokemonGenderDetails = await EXTRACT_DATA.getPokemonGenderDetails(currentPokemonSpeciesName);
+
+        RENDERERS.displayCurrentlySelectedPokemonName(currentPokemonName);
+        RENDERERS.displayCurrentlySelectedPokemonSprites(currentPokemonSprites);
+        RENDERERS.displayCurrentlySelectedPokemonTypes(pokemonTypes);
+        RENDERERS.displayCurrentlySelectedPokemonStats(currentPokemonStats);
+        RENDERERS.displayCurrentlySelectedPokemonInfos(currentPokemonGenderDetails);
     },
     displayCurrentlySelectedPokemonName: function (currentPokemonName) {
         const pokemonShinyBtn = document.createElement('btn');
@@ -196,16 +245,14 @@ const RENDERERS = {
     displayCurrentlySelectedPokemonStats: function (pokemonStats) {
         COMPONENT_GENERATOR.createStatsDiv(pokemonStats);
     },
-    displayCurrentlySelectedPokemonInfos: function() {
-        //gender
-        //weight
-        //height
-        //rate
+    displayCurrentlySelectedPokemonInfos: function (currentPokemonGenderDetails) {
+        COMPONENT_GENERATOR.createInfoDiv(currentPokemonGenderDetails);
     }
 }
 
 const COMPONENT_GENERATOR = {
     createPokemonNamesDivs: function (pokemons) {
+        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDivs = [];
         for (const pokemon of pokemons) {
             COMPONENT_GENERATOR.createPokemonNameDiv(pokemon.name);
         }
@@ -219,13 +266,14 @@ const COMPONENT_GENERATOR = {
         div.append(p);
         DOM.pokemonList.append(div);
         div.addEventListener('click', HANDLERS.pokemonNameDivClickListener);
+        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDivs.push(div);
     },
-    createPokemonTypesDiv: function(pokemonTypes) {
-        for(let i = 0; i < pokemonTypes.length; i++) {
+    createPokemonTypesDiv: function (pokemonTypes) {
+        for (let i = 0; i < pokemonTypes.length; i++) {
             COMPONENT_GENERATOR.createPokemonTypeDiv(pokemonTypes[i], i);
         }
     },
-    createPokemonTypeDiv:function(type, pokemonTypeIndex) {
+    createPokemonTypeDiv: function (type, pokemonTypeIndex) {
         const pokemonTypeDiv = document.createElement('div');
         pokemonTypeDiv.classList.add("pokemon-display-type");
 
@@ -242,15 +290,15 @@ const COMPONENT_GENERATOR = {
         pokemonTypeDiv.append(pokemonTypeP);
 
         DOM.pokemonDisplayTypesDiv.append(pokemonTypeDiv);
-    },    
+    },
     createStatsDiv: function (pokemonStats) {
-        const statsitle = document.createElement('h2');
-        statsitle.classList.add("stats-title");
-        statsitle.textContent = "Statistics : ";
-        DOM.pokemonStatsDiv.append(statsitle);
+        const statsTitle = document.createElement('h2');
+        statsTitle.classList.add("stats-title");
+        statsTitle.textContent = "Statistics:";
+        DOM.pokemonStatsDiv.append(statsTitle);
         pokemonStats.forEach(stat => { COMPONENT_GENERATOR.createStatDiv(stat) });
     },
-    createStatDiv: function(stat) {
+    createStatDiv: function (stat) {
         const statDiv = document.createElement('div');
         statDiv.classList.add("stat-div");
         const statNameP = document.createElement('p');
@@ -258,43 +306,93 @@ const COMPONENT_GENERATOR = {
         statNameP.textContent = stat.name.toUpperCase();
         const statAmountP = document.createElement('p');
         statAmountP.classList.add("stat-amount");
-        statAmountP.textContent = " = " + stat.base;
+        statAmountP.textContent = " => " + stat.base;
         statDiv.append(statNameP);
         statDiv.append(statAmountP);
         DOM.pokemonStatsDiv.append(statDiv);
     },
-    createInfoDiv: function() {
-//************************************ */
+    createInfoDiv: function (currentPokemonGenderDetails) {
+        const generalInfoTitle = document.createElement('h2');
+        generalInfoTitle.classList.add("general-info-title");
+        generalInfoTitle.textContent = "General informations:";
+        DOM.pokemonInfoDiv.append(generalInfoTitle);
+
+        COMPONENT_GENERATOR.createGenderDiv(currentPokemonGenderDetails);
+        COMPONENT_GENERATOR.createMeasurementsDiv(CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos);
+
+        //rate
     },
-    createGenderDiv: function(pokemonGenders) {
-        const gendersDiv = document.createElement('div');
-        for(let gender of pokemonGenders) {
+    createGenderDiv: async function (currentPokemonGenderDetails) {
+        const gendersGlobalDiv = document.createElement('div');
+        gendersGlobalDiv.classList.add("genders-global-div");
+
+        const genderDiv = document.createElement('div');
+        genderDiv.classList.add('gender-div');
+
+        const gendersTitle = document.createElement('p');
+        gendersTitle.classList.add("genders-title");
+        gendersTitle.textContent = "Genders:";
+        gendersGlobalDiv.append(gendersTitle);
+
+        for (let gender of currentPokemonGenderDetails) {
             const genderImg = document.createElement('img');
             genderImg.classList.add('gender-img');
-            gendersDiv.genderImg.src = GENDER_VARIABLES;
+            genderImg.src = gender.gender.image;
+            genderImg.title = gender.gender.label
+            genderDiv.append(genderImg)
         }
-    }
-}
 
-const CURRENTLY_DISPLAYED_POKEMON_VARIABLES = {
-    nameDiv: "",
-    pokemonInfos: "",
+        gendersGlobalDiv.append(genderDiv);
+        DOM.pokemonInfoDiv.append(gendersGlobalDiv)
+    },
+    createMeasurementsDiv: function () {
+        const measurementsDiv = document.createElement('div');
+        const heightDiv = document.createElement('div');
+        const weightDiv = document.createElement('div');
+        measurementsDiv.classList.add('measurements-div');
+        heightDiv.classList.add('height-div');
+        weightDiv.classList.add('weight-div');
+
+        const heightTitle = document.createElement('p');
+        const weightTitle = document.createElement('p');
+        heightTitle.classList.add("height-title");
+        weightTitle.classList.add("weight-title");
+        heightTitle.textContent = "HEIGHT:"
+        weightTitle.textContent = "WEIGHT:"
+
+        const heightValue = document.createElement('p');
+        const weightValue = document.createElement('p');
+        heightValue.classList.add("height-value");
+        weightValue.classList.add("weight-value");
+        heightValue.textContent = EXTRACT_DATA.getPokemonHeight() + " m";
+        weightValue.textContent = EXTRACT_DATA.getPokemonWeight() + " kg";
+
+        heightDiv.append(heightTitle, heightValue);
+        weightDiv.append(weightTitle, weightValue);
+        measurementsDiv.append(heightDiv, weightDiv)
+
+        DOM.pokemonInfoDiv.append(measurementsDiv)
+    },
 }
 
 const GLOBAL_CACHED_VARIABLES = {
-    femaleGenderDetailsByPokemonName: {},
-    maleGenderDetailsByPokemonName: {},
-    genderlessGenderDetailsByPokemonName: {},
+    pokemonGenderDetailsByName: {},
 }
 
 const GENDER_VARIABLES = {
     female: {
+        name: "female",
+        label: "Female",
         image: "images/gender/female.png"
     },
     male: {
+        name: "male",
+        label: "Male",
         image: "images/gender/male.png"
     },
     genderless: {
+        name: "genderless",
+        label: "Genderless",
         image: "images/gender/genderless.png"
     }
 }
@@ -303,36 +401,39 @@ const HANDLERS = {
     pokemonNameDivClickListener: async function (e) {
         if (e.currentTarget !== CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDiv) {
             RENDERERS.resetDisplay();
-            RENDERERS.toggleCurrentlySelectedPokemonClass(e);
+            const currentlySelectedNameDiv = e.currentTarget;
 
             const currentPokemonName = e.currentTarget.textContent.toLowerCase();
-            const currentPokemonUrl = EXTRACT_DATA.getPokemonUrl(currentPokemonName);
-            const currentPokemonInfos = await EXTRACT_DATA.getPokemonInfos(currentPokemonUrl);
-            CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos = currentPokemonInfos;
-            const pokemonSprites = await EXTRACT_DATA.getPokemonSprites(currentPokemonInfos);
-            const pokemonTypes = await EXTRACT_DATA.getPokemonTypes(currentPokemonInfos);
-            const pokemonStats = await EXTRACT_DATA.getPokemonStats(currentPokemonInfos);
-            const pokemonGenderInfo = await EXTRACT_DATA.getPokemonGenderInfos(currentPokemonName)
-
-            RENDERERS.displayCurrentlySelectedPokemonName(currentPokemonName);
-            RENDERERS.displayCurrentlySelectedPokemonSprites(pokemonSprites);
-            RENDERERS.displayCurrentlySelectedPokemonTypes(pokemonTypes);
-            RENDERERS.displayCurrentlySelectedPokemonStats(pokemonStats);
-            // RENDERERS.displayCurrentlySelectedPokemonInfos(currentPokemonInfos);
-
-            console.log(GLOBAL_CACHED_VARIABLES.femaleGenderDetailsByPokemonName)
+            RENDERERS.displayPokemon(currentPokemonName, currentlySelectedNameDiv);
         }
-
     },
     pokemonShinyBtnClickListener: async function () {
         const pokemonSprites = await EXTRACT_DATA.getPokemonSprites(CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos);
         RENDERERS.displayCurrentlySelectedPokemonShinySprites(pokemonSprites);
+    },
+    arrowBtnEventListener: async function(e) {
+        console.log(CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset);
+        
+        if (e.currentTarget.id === "up-arrow-btn" && CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset > 0) {
+            console.log(CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset + " up arrow");
+            CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset -= 20;
+            RENDERERS.emptyPokemonList();
+            POKEAPI_VARIABLES.updatePokeApiUrl();
+            RENDERERS.initDisplay()
+        } 
+        if (e.currentTarget.id === "down-arrow-btn") {
+            CURRENTLY_DISPLAYED_POKEMON_VARIABLES.currentPageOffset += 20;
+            RENDERERS.emptyPokemonList();
+            POKEAPI_VARIABLES.updatePokeApiUrl();
+            RENDERERS.initDisplay()
+        }
     }
-
 }
 
+EXTRACT_DATA.initPokemonGenderDetails();
+DOM.downArrowBtn.addEventListener('click', HANDLERS.arrowBtnEventListener);
+DOM.upArrowBtn.addEventListener('click', HANDLERS.arrowBtnEventListener);
 RENDERERS.initDisplay();
-EXTRACT_DATA.getPokemonGenderDetails();
 
 
 
@@ -355,10 +456,10 @@ EXTRACT_DATA.getPokemonGenderDetails();
 // ==> pokemon.type2?.name ?? 'pas de second type'
 
 /* 
-- carte à côté des caract avec taille et poids 
 - afficher force et faiblesse type au survol
 - afficher sprite en fonction de la génération
-- afficher si F / M ou genderless ou pas 
 - mieux gérer les promises: stocker les promises et await then dans l'affichage directement pour afficher
 une image "d'attente"
 */ 
+
+//function.bind 

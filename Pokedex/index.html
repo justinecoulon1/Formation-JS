@@ -26,7 +26,7 @@
                 extend: {
                     colors: {
                         primary: {
-                            "pink":"#FF3060"
+                            "pink": "#FF3060"
                         },
                         secondary: {
                         },
@@ -75,10 +75,20 @@
                 @apply flex w-full p-5
                 border-4 border-black rounded-lg
             }
+            .pokemon-list-container {
+                @apply flex w-1/3 gap-1
+            }
             .pokemon-list {
-                @apply flex flex-col w-1/3 py-1 px-5 gap-1
+                @apply flex flex-col w-5/6 py-1 px-5 gap-1
                 border-l-2
             }
+            .arrow-div {
+                @apply flex flex-wrap w-1/6 content-between
+            }
+            .arrow-btn {
+                @apply border-4 border-black rounded-xl bg-white
+            }
+
             .pokemon-name-div {
                 @apply flex p-1 
                 even:bg-red-700/40
@@ -110,7 +120,7 @@
                 dark:text-white
             }      
             .pokemon-display-types-div {
-                @apply flex w-full h-1/2 p-2 content-center
+                @apply flex h-1/2 p-2 content-center
             }
             .pokemon-display-type {
                 @apply flex content-center p-2 gap-2
@@ -132,19 +142,16 @@
                 @apply flex content-center w-1/2 p-4
             }
             .pokemon-sprite {
-                @apply h-full
+                @apply h-52
                 shadow-md
                 border-4 border-transparent rounded-3xl
             }            
             .pokemon-display-information {
-                @apply flex p-2 gap-3
+                @apply flex p-2 gap-7
                 dark:text-white
             }
             .pokemon-stats-div {
-                @apply flex flex-col w-2/5 p-2 gap-3
-            }
-            .pokemon-info-div {
-                @apply flex flex-col w-3/5 p-2 gap-3
+                @apply flex flex-col h-full w-3/6 p-2 gap-3
             }
             .stats-title {
                 @apply 
@@ -156,7 +163,7 @@
                 finger-paint-regular
             } 
             .stat-name {
-                @apply flex w-5/6 whitespace-nowrap object-contain
+                @apply flex w-4/6 whitespace-nowrap object-contain
                 finger-paint-regular
             }            
             .stat-amount {
@@ -171,7 +178,41 @@
                 @apply bg-primary-pink/15
                 dark:bg-primary-pink/25
             }
-        }
+
+            .pokemon-info-div {
+                @apply flex flex-col w-3/6 p-2 gap-3
+            }
+            .general-info-title {
+                @apply 
+               chewy-regular text-xl 
+                border-b-2 border-black dark:border-white
+            }
+            .genders-global-div {
+                @apply flex flex-col items-start w-1/2 gap-2
+            }
+            .gender-div {
+                @apply flex items-start gap-2
+            }
+            .gender-img {
+                @apply flex h-8 
+                cursor-pointer
+            } 
+            .genders-title {
+                @apply flex
+                finger-paint-regular
+            }
+            .measurements-div {
+                @apply flex flex-col
+            }
+            .height-div {
+                @apply flex gap-2
+                finger-paint-regular
+            }            
+            .weight-div {
+                @apply flex gap-2
+                finger-paint-regular
+            }
+         }
         @layer components {
             .dark-mode-img {
                 @apply h-12 w-12
@@ -246,7 +287,14 @@
                         <div class="pokemon-info-div"></div>
                     </div>
                 </section>
-                <section class="pokemon-list">
+                <section class="pokemon-list-container">
+                    <div class="pokemon-list"></div>
+                    <div class="arrow-div">
+                        <button class="arrow-btn" id="up-arrow-btn"><img id="up-arrow-img" src="images/up-arrow.png"
+                                alt=""></button>
+                        <button class="arrow-btn" id="down-arrow-btn"><img id="down-arrow-img"
+                                src="images/down-arrow.png" alt=""></button>
+                    </div>
                 </section>
             </section>
         </section>
