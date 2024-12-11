@@ -41,7 +41,8 @@ const DOM = {
     pokemonSecondTypeImg: document.querySelector("#pokemon-type2-icon"),
     pokemonDisplayInfoDiv: document.querySelector(".pokemon-display-information"),
     pokemonStatsDiv: document.querySelector(".pokemon-stats-div"),
-    pokemonInfoDiv: document.querySelector(".pokemon-info-div"),
+    pokemonInfoGlobalDiv: document.querySelector(".pokemon-info-div"),
+    pokemonInfoContainer: "",
     pokemonShinyButton: "",
     pokemonFrontSpriteImg: document.querySelector("#pokemon-front-sprite"),
     pokemonBackSpriteImg: document.querySelector("#pokemon-back-sprite"),
@@ -152,6 +153,20 @@ const EXTRACT_DATA = {
         const pokemonWeight = CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos.weight * 0.1;
         return pokemonWeight.toFixed(1);
     },
+    getGenderRate: async function(currentPokemonGenderDetails) {
+        if (currentPokemonGenderDetails.length === 2) {
+            for (let gender of currentPokemonGenderDetails) {
+                if (gender.gender.name === 'female') {
+                    return gender.rate
+                }
+            }
+        } else {
+            return -1;
+        }
+    },
+    computeGenderRate: async function(genderRate) {
+        return [{"gender": GENDER_VARIABLES.female, "rate": 100 * (genderRate/8)}, {"gender":GENDER_VARIABLES.male, "rate":100 * ((8-genderRate)/8)}]
+    }
 }
 
 const RENDERERS = {
@@ -167,7 +182,7 @@ const RENDERERS = {
         DOM.pokemonBackSpriteDiv.replaceChildren();
         DOM.pokemonDisplayTypesDiv.replaceChildren();
         DOM.pokemonStatsDiv.replaceChildren();
-        DOM.pokemonInfoDiv.replaceChildren();
+        DOM.pokemonInfoGlobalDiv.replaceChildren();
     },
     emptyPokemonList: function() {
         DOM.pokemonList.replaceChildren();
@@ -199,25 +214,31 @@ const RENDERERS = {
     },
     displayCurrentlySelectedPokemonName: function (currentPokemonName) {
         const pokemonShinyBtn = document.createElement('btn');
-        const pokemonShinyImg = document.createElement('img');
-        DOM.pokemonShinyButton = pokemonShinyBtn;
         pokemonShinyBtn.classList.add('btn');
         pokemonShinyBtn.classList.add('shiny-btn');
+        pokemonShinyBtn.addEventListener('click', HANDLERS.pokemonShinyBtnClickListener);
+        
+        const pokemonShinyImg = document.createElement('img');
         pokemonShinyImg.src = "images/shiny_icon.png";
         pokemonShinyBtn.append(pokemonShinyImg);
-        pokemonShinyBtn.addEventListener('click', HANDLERS.pokemonShinyBtnClickListener);
+        
+        DOM.pokemonShinyButton = pokemonShinyBtn;
         DOM.pokemonDisplayNameDiv.append(pokemonShinyBtn);
         DOM.pokemonDisplayNameDiv.append(currentPokemonName.toUpperCase());
     },
     displayCurrentlySelectedPokemonSprites: function (pokemonSprites) {
         DOM.pokemonFrontSpriteImg = document.createElement('img');
         DOM.pokemonBackSpriteImg = document.createElement('img');
+
         DOM.pokemonFrontSpriteImg.classList.add('pokemon-sprite');
         DOM.pokemonBackSpriteImg.classList.add('pokemon-sprite');
+
         DOM.pokemonFrontSpriteImg.id = "pokemon-front-sprite";
         DOM.pokemonBackSpriteImg.id = "pokemon-back-sprite";
+
         DOM.pokemonFrontSpriteDiv.append(DOM.pokemonFrontSpriteImg);
         DOM.pokemonBackSpriteDiv.append(DOM.pokemonBackSpriteImg);
+        
         DOM.pokemonFrontSpriteImg.src = pokemonSprites.front_default;
         DOM.pokemonBackSpriteImg.src = pokemonSprites.back_default;
     },
@@ -241,7 +262,8 @@ const RENDERERS = {
     },
     displayCurrentlySelectedPokemonInfos: function (currentPokemonGenderDetails) {
         COMPONENT_GENERATOR.createInfoDiv(currentPokemonGenderDetails);
-    }
+    },
+
 }
 
 const COMPONENT_GENERATOR = {
@@ -252,15 +274,18 @@ const COMPONENT_GENERATOR = {
         }
     },
     createPokemonNameDiv: function (pokemonName) {
-        const div = document.createElement('div');
-        div.classList.add('pokemon-name-div');
-        const p = document.createElement('p');
-        p.classList.add('pokemon-name-p');
-        p.textContent = pokemonName.toUpperCase();
-        div.append(p);
-        DOM.pokemonList.append(div);
-        div.addEventListener('click', HANDLERS.pokemonNameDivClickListener);
-        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDivs.push(div);
+        const nameDiv = document.createElement('div');
+        nameDiv.classList.add('pokemon-name-div');
+        nameDiv.addEventListener('click', HANDLERS.pokemonNameDivClickListener);
+
+        const name = document.createElement('p');
+        name.classList.add('pokemon-name-p');
+        name.textContent = pokemonName.toUpperCase();
+
+        nameDiv.append(name);
+        DOM.pokemonList.append(nameDiv);
+        
+        CURRENTLY_DISPLAYED_POKEMON_VARIABLES.nameDivs.push(nameDiv);
     },
     createPokemonTypesDiv: function (pokemonTypes) {
         for (let i = 0; i < pokemonTypes.length; i++) {
@@ -295,12 +320,15 @@ const COMPONENT_GENERATOR = {
     createStatDiv: function (stat) {
         const statDiv = document.createElement('div');
         statDiv.classList.add("stat-div");
+
         const statNameP = document.createElement('p');
         statNameP.classList.add("stat-name");
         statNameP.textContent = stat.name.toUpperCase();
+
         const statAmountP = document.createElement('p');
         statAmountP.classList.add("stat-amount");
         statAmountP.textContent = " => " + stat.base;
+        
         statDiv.append(statNameP);
         statDiv.append(statAmountP);
         DOM.pokemonStatsDiv.append(statDiv);
@@ -309,12 +337,17 @@ const COMPONENT_GENERATOR = {
         const generalInfoTitle = document.createElement('h2');
         generalInfoTitle.classList.add("general-info-title");
         generalInfoTitle.textContent = "General informations:";
-        DOM.pokemonInfoDiv.append(generalInfoTitle);
+        DOM.pokemonInfoGlobalDiv.prepend(generalInfoTitle);
 
+
+        const pokemonInfoContainer = document.createElement('div');
+        pokemonInfoContainer.classList.add('pokemon-information-container');
+        DOM.pokemonInfoGlobalDiv.append(pokemonInfoContainer); 
+        DOM.pokemonInfoContainer = pokemonInfoContainer
+        
         COMPONENT_GENERATOR.createGenderDiv(currentPokemonGenderDetails);
         COMPONENT_GENERATOR.createMeasurementsDiv(CURRENTLY_DISPLAYED_POKEMON_VARIABLES.pokemonInfos);
-
-        //rate
+        COMPONENT_GENERATOR.createGenderRateDiv(currentPokemonGenderDetails);
     },
     createGenderDiv: async function (currentPokemonGenderDetails) {
         const gendersGlobalDiv = document.createElement('div');
@@ -325,7 +358,7 @@ const COMPONENT_GENERATOR = {
 
         const gendersTitle = document.createElement('p');
         gendersTitle.classList.add("genders-title");
-        gendersTitle.textContent = "Genders:";
+        gendersTitle.textContent = "GENDERS:";
         gendersGlobalDiv.append(gendersTitle);
 
         for (let gender of currentPokemonGenderDetails) {
@@ -337,7 +370,7 @@ const COMPONENT_GENERATOR = {
         }
 
         gendersGlobalDiv.append(genderDiv);
-        DOM.pokemonInfoDiv.append(gendersGlobalDiv);
+        DOM.pokemonInfoContainer.append(gendersGlobalDiv);
     },
     createMeasurementsDiv: function () {
         const measurementsDiv = document.createElement('div');
@@ -365,8 +398,36 @@ const COMPONENT_GENERATOR = {
         weightDiv.append(weightTitle, weightValue);
         measurementsDiv.append(heightDiv, weightDiv);
 
-        DOM.pokemonInfoDiv.append(measurementsDiv);
+        DOM.pokemonInfoContainer.append(measurementsDiv);
     },
+    createGenderRateDiv: async function(currentPokemonGenderDetails) {
+        const genderRateDiv = document.createElement('div');
+        genderRateDiv.classList.add('gender-rate-div');
+        
+        const genderRateTitle = document.createElement('p');
+        genderRateTitle.classList.add("gender-rate-title");
+        genderRateTitle.textContent = "GENDER RATE:";
+        genderRateDiv.append(genderRateTitle);
+
+        const genderRates = await EXTRACT_DATA.getGenderRate(currentPokemonGenderDetails);
+        if (genderRates !== -1) {
+            const computedGenderRates = await EXTRACT_DATA.computeGenderRate(genderRates);
+            
+            for (let rate of computedGenderRates) {
+                const genderRateValue = document.createElement('p');
+                genderRateValue.classList.add("gender-rate-value");
+                genderRateValue.textContent = rate.gender.label + ": " + rate.rate + "%";
+                genderRateDiv.append(genderRateValue);
+            }
+        } else {
+            const genderlessGenderRateValue = document.createElement('p');
+            genderlessGenderRateValue.classList.add("gender-rate-value");
+            genderlessGenderRateValue.textContent = "Genderless: 100%";
+            genderRateDiv.append(genderlessGenderRateValue);
+        }
+
+        DOM.pokemonInfoContainer.append(genderRateDiv);
+    }
 }
 
 const GLOBAL_CACHED_VARIABLES = {
@@ -453,7 +514,7 @@ const HANDLERS = {
 
 /* 
 - afficher force et faiblesse type au survol
-- afficher sprite en fonction de la génération
+- afficher sprite en fonction de la génération : check si front default back default de chaque génération est != null
 - mieux gérer les promises: stocker les promises et await then dans l'affichage directement pour afficher
 une image "d'attente"
 */ 

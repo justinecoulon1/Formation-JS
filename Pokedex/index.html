@@ -151,7 +151,7 @@
                 dark:text-white
             }
             .pokemon-stats-div {
-                @apply flex flex-col h-full w-3/6 p-2 gap-3
+                @apply flex flex-col h-full w-1/2 p-2 gap-3
             }
             .stats-title {
                 @apply 
@@ -180,7 +180,10 @@
             }
 
             .pokemon-info-div {
-                @apply flex flex-col w-3/6 p-2 gap-3
+                @apply flex flex-col w-1/2 p-2 gap-3
+            }
+            .pokemon-information-container {
+                @apply flex p-2 gap-x-1 gap-y-10 flex-wrap
             }
             .general-info-title {
                 @apply 
@@ -212,6 +215,11 @@
                 @apply flex gap-2
                 finger-paint-regular
             }
+            .gender-rate-div {
+                @apply flex flex-col gap-2
+                finger-paint-regular
+            }
+
          }
         @layer components {
             .dark-mode-img {
@@ -284,7 +292,8 @@
                     </div>
                     <div class="pokemon-display-information">
                         <div class="pokemon-stats-div"></div>
-                        <div class="pokemon-info-div"></div>
+                        <div class="pokemon-info-div">
+                        </div>
                     </div>
                 </section>
                 <section class="pokemon-list-container">
