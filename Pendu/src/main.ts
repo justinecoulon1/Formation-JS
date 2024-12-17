@@ -31,13 +31,20 @@ const GAME_FUNCTIONS = {
 }
 
 const DOM = {
-    playButton: document.querySelector('#play-button') as HTMLButtonElement,
-    mainDisplay: document.querySelector('#main-display') as HTMLElement,
+    playButton: getHTMLElementOrThrow('#play-button'),
+    mainDisplay: getHTMLElementOrThrow('#main-display'),
     manDiv: document.createElement('div'),
     wordDiv: document.createElement('div'),
     lettersDiv: document.createElement('div'),
     letterButtons: [] as HTMLElement[],
-    wordInput: document.createElement('input'),
+}
+
+function getHTMLElementOrThrow(selector: string): HTMLElement {
+    const element = document.querySelector(selector);
+    if (!element) {
+        throw new Error(`Missing ${selector}`);
+    }
+    return element as HTMLElement;
 }
 
 const GAME_VARIABLES = {
@@ -109,16 +116,15 @@ const COMPONENT_CREATOR = {
         const toGuessLetterContainerDiv = document.createElement('div');
         toGuessLetterContainerDiv.classList.add('to-guess-letters-container-div');
         DOM.wordDiv.classList.add('word-div');
-        for (let letter of GAME_VARIABLES.wordToGuess) {
+        for (const _letter of GAME_VARIABLES.wordToGuess) {
             const letterDiv = document.createElement('div');
             letterDiv.textContent = '_'
             toGuessLetterContainerDiv.append(letterDiv);
         }
-        DOM.wordInput.classList.add('word-input');
-        DOM.wordDiv.append(toGuessLetterContainerDiv, DOM.wordInput)
+        DOM.wordDiv.append(toGuessLetterContainerDiv)
     },
     createLettersDiv: function () {
-        for (let letter of GAME_VARIABLES.alphabet) {
+        for (const letter of GAME_VARIABLES.alphabet) {
             const letterBtn = document.createElement('button');
             letterBtn.classList.add('btn', 'letter-btn')
             letterBtn.textContent = letter;
