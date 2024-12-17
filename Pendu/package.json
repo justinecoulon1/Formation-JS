@@ -1,0 +1,16 @@
+{
+  "name": "pendu",
+  "version": "0.1.0",
+  "description": "Jeu du pendu",
+  "main": "index.html",
+  "scripts": {
+    "compile": "tsc",
+    "watch": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Justine C",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
