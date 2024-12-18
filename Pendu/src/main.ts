@@ -2,38 +2,40 @@ const GAME_FUNCTIONS = {
     initGame: function () {
         GAME_VARIABLES.wordToGuess = GAME_FUNCTIONS.getRandomWord();
         GAME_VARIABLES.currentAmountOfTries = 0;
+        GAME_FUNCTIONS.updateCurrentlyGuessedWord([]);
     },
     getRandomWord: function () {
         return 'pomme';
     },
     isGameWon: function () {
         if (GAME_VARIABLES.currentlyGuessedWord.join('') === GAME_VARIABLES.wordToGuess) {
-            RENDERERS.resetDisplay();
-            const wonScreenDiv = document.createElement('div');
-            wonScreenDiv.classList.add('end-screen-div');
-            wonScreenDiv.textContent = `YOU WON !!! The word was "${GAME_VARIABLES.wordToGuess}" `
-            DOM.mainDisplay.append(wonScreenDiv);
+            const wonMessage = `YOU WON !!! The word was "${GAME_VARIABLES.wordToGuess}" `;
+            RENDERERS.displayEndGamePage(wonMessage)
         }
     },
-    updateTriesAndCheckIfGameEnded: function () {
+    isGameLost: function () {
+        if (GAME_VARIABLES.currentAmountOfTries === GAME_VARIABLES.maxAmountOfTries) {
+            const lostMessage = `YOU LOST !!! The word was "${GAME_VARIABLES.wordToGuess}" `;
+            RENDERERS.displayEndGamePage(lostMessage);
+        }
+    },
+    updateTries: function () {
         GAME_VARIABLES.currentAmountOfTries++
         if (GAME_VARIABLES.currentAmountOfTries < GAME_VARIABLES.maxAmountOfTries) {
-            RENDERERS.updateDisplay();
-        }
-
-        if (GAME_VARIABLES.currentAmountOfTries === GAME_VARIABLES.maxAmountOfTries) {
-            RENDERERS.displayEndGamePage();
+            RENDERERS.updateAmountOfTriesDisplay();
         }
     },
     tryLetter: function (letter: string) {
         if (GAME_VARIABLES.wordToGuess.includes(letter)) {
-            const wordToGuessArray = GAME_VARIABLES.wordToGuess.split('');
-            const indexesOfMatches: any[] = wordToGuessArray.map((e, i) => e === letter ? i : -1).filter((element) => element != -1);
+            const indexesOfMatches: any[] = GAME_VARIABLES.wordToGuess.split('')
+                .map((e, i) => e === letter ? i : -1)
+                .filter((element) => element != -1);
             GAME_FUNCTIONS.updateCurrentlyGuessedWord(indexesOfMatches);
             RENDERERS.updateWordDisplayOnTry();
             GAME_FUNCTIONS.isGameWon();
         } else {
-            GAME_FUNCTIONS.updateTriesAndCheckIfGameEnded();
+            GAME_FUNCTIONS.updateTries();
+            GAME_FUNCTIONS.isGameLost();
         }
     },
     updateCurrentlyGuessedWord: function (indexesOfMatches: Array<number>) {
@@ -79,27 +81,28 @@ const GAME_VARIABLES = {
 
 const HANDLERS = {
     playButtonListener: function () {
-        RENDERERS.togglePlayButton();
+        RENDERERS.toggleButtonDisabledClass(DOM.playButton as HTMLButtonElement);
+        RENDERERS.toggleButtonDisabledClass(DOM.replayButton as HTMLButtonElement);
+        GAME_FUNCTIONS.initGame();
+        RENDERERS.initDisplay();
+    },
+    replayButtonListener: function () {
         GAME_FUNCTIONS.initGame();
         RENDERERS.initDisplay();
     },
     letterButtonListener: function (e: any) {
         const currentLetterBtn = e.currentTarget;
-        RENDERERS.toggleLetterButton(currentLetterBtn as HTMLButtonElement);
+        RENDERERS.toggleButtonDisabledClass(currentLetterBtn as HTMLButtonElement);
 
         GAME_FUNCTIONS.tryLetter(currentLetterBtn.textContent.toLowerCase());
     },
-    replayButtonListener: function () {
-        GAME_FUNCTIONS.initGame();
-        RENDERERS.initDisplay();
-    }
 }
 
 const RENDERERS = {
     initDisplay: function () {
         RENDERERS.resetDisplay();
-        RENDERERS.updateAmountOfTriesDisplay();
         COMPONENT_CREATOR.createGameScreen();
+        RENDERERS.updateAmountOfTriesDisplay();
     },
     resetDisplay: function () {
         DOM.mainDisplay.replaceChildren();
@@ -107,21 +110,15 @@ const RENDERERS = {
         DOM.toGuessLetterContainerDiv.replaceChildren();
         DOM.manDiv.replaceChildren();
     },
-    updateDisplay: function () {
-        RENDERERS.updateAmountOfTriesDisplay();
-    },
-    displayEndGamePage: function () {
+    displayEndGamePage: function (endMessage: string) {
         RENDERERS.resetDisplay();
-        const wonScreenDiv = document.createElement('div');
-        wonScreenDiv.classList.add('end-screen-div');
-        wonScreenDiv.textContent = `YOU LOST !!! The word was "${GAME_VARIABLES.wordToGuess}" `
-        DOM.mainDisplay.append(wonScreenDiv);
+        const endScreenDiv = document.createElement('div');
+        endScreenDiv.classList.add('end-screen-div');
+        endScreenDiv.textContent = endMessage;
+        DOM.mainDisplay.append(endScreenDiv);
     },
-    togglePlayButton: function () {
-        DOM.playButton.toggleAttribute('disabled');
-    },
-    toggleLetterButton: function (currentLetterBtn: HTMLButtonElement) {
-        currentLetterBtn.toggleAttribute('disabled');
+    toggleButtonDisabledClass: function (button: HTMLButtonElement) {
+        button.toggleAttribute('disabled');
     },
     updateAmountOfTriesDisplay: function () {
         DOM.manDiv.textContent = `You have ${GAME_VARIABLES.maxAmountOfTries - GAME_VARIABLES.currentAmountOfTries} tries left`
@@ -138,7 +135,7 @@ const COMPONENT_CREATOR = {
         gameSection.classList.add('game-section');
 
         DOM.manDiv.classList.add('pendu-div');
-        RENDERERS.updateAmountOfTriesDisplay();
+
         const lettersAndWordContainer = document.createElement('div')
         lettersAndWordContainer.classList.add('letters-word-container');
 
@@ -154,7 +151,6 @@ const COMPONENT_CREATOR = {
     createWordDiv: function () {
         DOM.toGuessLetterContainerDiv.classList.add('to-guess-letters-container-div');
         DOM.wordDiv.classList.add('word-div');
-        GAME_FUNCTIONS.updateCurrentlyGuessedWord([]);
         COMPONENT_CREATOR.createToGuessLettersDiv(GAME_VARIABLES.wordToGuess.length);
         DOM.wordDiv.append(DOM.toGuessLetterContainerDiv)
     },

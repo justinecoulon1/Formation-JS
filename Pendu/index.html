@@ -8,34 +8,6 @@
     <script src="./dist/main.js" defer></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            content: ["./*.html"],
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            "pink": "#FF3060"
-                        },
-                        secondary: {
-                        },
-                    },
-                    borderWidth: {
-                        '10': '10px',
-                        '12': '12px',
-                        '14': '14px',
-                        '16': '16px',
-                        '18': '18px',
-                        '20': '20px',
-                    },
-                    fontFamily: {
-                        chewy: ['"Chewy Font"']
-                    }
-                }
-            },
-            darkMode: 'class',
-        }
-    </script>
     <style type="text/tailwindcss">
         @layer base {
             header {
@@ -65,6 +37,7 @@
                 p-5
                 bg-gray-300  
                 border-e-2 border-gray-500
+                text-xl font-bold
             }
             .letters-word-container {
                 @apply flex flex-col justify-between
@@ -103,7 +76,7 @@
             .end-screen-div {
                 @apply flex  content-center
                 h-40 w-3/4
-                text-black text-5xl
+                text-5xl
             }
          }
         @layer components {
@@ -135,7 +108,7 @@
         <h1>Jeu du pendu</h1>
         <button class="btn play-button" id="play-button"><img class="button-image" src="images/start.png"
                 alt=""></button>
-        <button class="btn replay-button" id="replay-button"><img class="button-image" src="images/replay.png"
+        <button class="btn replay-button" id="replay-button" disabled><img class="button-image" src="images/replay.png"
                 alt=""></button>
     </header>
     <main id="main-display">
