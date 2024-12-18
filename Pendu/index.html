@@ -39,46 +39,79 @@
     <style type="text/tailwindcss">
         @layer base {
             header {
-                @apply flex content-center h-40 w-full p-10 gap-5
+                @apply flex content-center 
+                h-40 w-full
+                p-10 gap-5
                 shadow-md shadow-gray-950
+                bg-gray-300
+                text-3xl font-bold
+            }
+            main {
+                @apply flex content-center 
+                p-16 
+            }
+            .header-container {
+                @apply flex 
+                h-full w-full 
+            }
+            .game-section {
+                @apply flex flex-wrap 
+                h-96 w-5/6 
+                shadow-md shadow-gray-950
+            }
+            .pendu-div {
+                @apply flex content-center
+                h-full w-1/2
+                p-5
+                bg-gray-300  
+                border-e-2 border-gray-500
+            }
+            .letters-word-container {
+                @apply flex flex-col justify-between
+                w-1/2
+                gap-5 p-10
+                bg-gray-300
+            }
+            .word-div {
+                @apply flex content-center 
+                gap-1 p-5 
                 bg-gray-300
                 text-3xl
             }
-            main {
-                @apply flex content-center p-16 
-            }
-            .header-container {
-                @apply flex h-full w-full 
-            }
-            .game-section {
-                @apply flex flex-col
-            }
-            .pendu-div {
-                @apply flex h-80 w-80 bg-gray-300
-            }
-            .word-div {
-                @apply flex flex-col h-32 w-80 content-center gap-1
-                bg-gray-500
-            }
             .letters-div {
-                @apply flex flex-wrap h-32 w-80 gap-1 p-2 content-center
-                bg-gray-700
-            }
-            .word-input {
-                @apply flex h-5 w-28 border-2 border-black
+                @apply flex flex-wrap content-center 
+                h-1/2 
+                gap-2.5 p-2 
+                bg-gray-300
             }
             .letter-btn {
-                @apply flex h-7 w-7 content-center text-white 
+                @apply flex content-center 
+                h-8 w-8
+                font-bold
+                border-2 rounded-xl border-black
+                
+                cursor-pointer
+                disabled:opacity-50
+                disabled:hover:bg-transparent
+                disabled:hover:cursor-default
+                hover:bg-gray-400
             }
             .to-guess-letters-container-div {
-                @apply flex gap-3
+                @apply flex 
+                gap-3
+            }
+            .end-screen-div {
+                @apply flex  content-center
+                h-40 w-3/4
+                text-black text-5xl
             }
          }
         @layer components {
             .btn {
                 @apply 
                 cursor-pointer
-                border-4 border-black rounded-lg
+                border-4 border-black 
+                rounded-xl
                 disabled:opacity-50
                 disabled:hover:bg-transparent
                 disabled:hover:cursor-default
@@ -101,6 +134,8 @@
     <header>
         <h1>Jeu du pendu</h1>
         <button class="btn play-button" id="play-button"><img class="button-image" src="images/start.png"
+                alt=""></button>
+        <button class="btn replay-button" id="replay-button"><img class="button-image" src="images/replay.png"
                 alt=""></button>
     </header>
     <main id="main-display">
