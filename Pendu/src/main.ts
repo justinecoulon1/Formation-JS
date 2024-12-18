@@ -22,11 +22,12 @@ const GAME_FUNCTIONS = {
     updateTries: function () {
         GAME_VARIABLES.currentAmountOfTries++
         if (GAME_VARIABLES.currentAmountOfTries < GAME_VARIABLES.maxAmountOfTries) {
-            RENDERERS.updateAmountOfTriesDisplay();
+            RENDERERS.updateTriesDisplay();
         }
     },
-    tryLetter: function (letter: string) {
+    tryLetter: function (letter: string, letterBtn: HTMLButtonElement) {
         if (GAME_VARIABLES.wordToGuess.includes(letter)) {
+            letterBtn.classList.add('letter-green-bg')
             const indexesOfMatches: any[] = GAME_VARIABLES.wordToGuess.split('')
                 .map((e, i) => e === letter ? i : -1)
                 .filter((element) => element != -1);
@@ -34,6 +35,7 @@ const GAME_FUNCTIONS = {
             RENDERERS.updateWordDisplayOnTry();
             GAME_FUNCTIONS.isGameWon();
         } else {
+            letterBtn.classList.add('letter-red-bg');
             GAME_FUNCTIONS.updateTries();
             GAME_FUNCTIONS.isGameLost();
         }
@@ -76,6 +78,7 @@ const GAME_VARIABLES = {
     maxAmountOfTries: 6,
     wordToGuess: '',
     currentlyGuessedWord: [] as string[],
+    //tab discovered letters plutôt 
     alphabet: 'abcdefghijklmnopqrstuvwxyz'.split(''),
 }
 
@@ -90,11 +93,12 @@ const HANDLERS = {
         GAME_FUNCTIONS.initGame();
         RENDERERS.initDisplay();
     },
-    letterButtonListener: function (e: any) {
-        const currentLetterBtn = e.currentTarget;
+    letterButtonListener: function (e: Event) {
+        const currentLetterBtn = e.currentTarget as HTMLButtonElement;
         RENDERERS.toggleButtonDisabledClass(currentLetterBtn as HTMLButtonElement);
 
-        GAME_FUNCTIONS.tryLetter(currentLetterBtn.textContent.toLowerCase());
+        const currentLetter = currentLetterBtn.textContent as string;
+        GAME_FUNCTIONS.tryLetter(currentLetter.toLowerCase(), currentLetterBtn);
     },
 }
 
@@ -102,7 +106,7 @@ const RENDERERS = {
     initDisplay: function () {
         RENDERERS.resetDisplay();
         COMPONENT_CREATOR.createGameScreen();
-        RENDERERS.updateAmountOfTriesDisplay();
+        RENDERERS.updateTriesDisplay();
     },
     resetDisplay: function () {
         DOM.mainDisplay.replaceChildren();
@@ -112,6 +116,7 @@ const RENDERERS = {
     },
     displayEndGamePage: function (endMessage: string) {
         RENDERERS.resetDisplay();
+
         const endScreenDiv = document.createElement('div');
         endScreenDiv.classList.add('end-screen-div');
         endScreenDiv.textContent = endMessage;
@@ -120,7 +125,7 @@ const RENDERERS = {
     toggleButtonDisabledClass: function (button: HTMLButtonElement) {
         button.toggleAttribute('disabled');
     },
-    updateAmountOfTriesDisplay: function () {
+    updateTriesDisplay: function () {
         DOM.manDiv.textContent = `You have ${GAME_VARIABLES.maxAmountOfTries - GAME_VARIABLES.currentAmountOfTries} tries left`
     },
     updateWordDisplayOnTry: function () {
