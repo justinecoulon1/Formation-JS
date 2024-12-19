@@ -1,72 +1,76 @@
 const GAME_FUNCTIONS = {
     initGame: function () {
-        GAME_VARIABLES.wordToGuess = GAME_FUNCTIONS.getRandomWord();
-        GAME_VARIABLES.currentAmountOfTries = 0;
+        GAME_VARIABLES.secretWord = GAME_FUNCTIONS.getRandomWord();
+        GAME_VARIABLES.currentTriesAmount = 0;
+        GAME_VARIABLES.maxTriesAmount = 6;
         GAME_FUNCTIONS.updateCurrentlyGuessedWord([]);
     },
     getRandomWord: function () {
         return 'pomme';
     },
-    isGameWon: function () {
-        if (GAME_VARIABLES.currentlyGuessedWord.join('') === GAME_VARIABLES.wordToGuess) {
-            const wonMessage = `YOU WON !!! The word was "${GAME_VARIABLES.wordToGuess}" `;
+    triggerGameWon: function () {
+        if (GAME_VARIABLES.currentlyGuessedWord.join('') === GAME_VARIABLES.secretWord) {
+            const wonMessage = `YOU WON !!! The word was "${GAME_VARIABLES.secretWord}" `;
             RENDERERS.displayEndGamePage(wonMessage)
         }
     },
-    isGameLost: function () {
-        if (GAME_VARIABLES.currentAmountOfTries === GAME_VARIABLES.maxAmountOfTries) {
-            const lostMessage = `YOU LOST !!! The word was "${GAME_VARIABLES.wordToGuess}" `;
+    triggerGameLost: function () {
+        if (GAME_VARIABLES.currentTriesAmount === GAME_VARIABLES.maxTriesAmount) {
+            const lostMessage = `YOU LOST !!! The word was "${GAME_VARIABLES.secretWord}" `;
             RENDERERS.displayEndGamePage(lostMessage);
         }
     },
-    updateTries: function () {
-        GAME_VARIABLES.currentAmountOfTries++
-        if (GAME_VARIABLES.currentAmountOfTries < GAME_VARIABLES.maxAmountOfTries) {
+    updateTriesAmount: function () {
+        GAME_VARIABLES.currentTriesAmount++
+        if (GAME_VARIABLES.currentTriesAmount < GAME_VARIABLES.maxTriesAmount) {
             RENDERERS.updateTriesDisplay();
         }
     },
     tryLetter: function (letter: string, letterBtn: HTMLButtonElement) {
-        if (GAME_VARIABLES.wordToGuess.includes(letter)) {
+        if (GAME_VARIABLES.secretWord.includes(letter)) {
             letterBtn.classList.add('letter-green-bg')
-            const indexesOfMatches: any[] = GAME_VARIABLES.wordToGuess.split('')
+            const indexesOfMatches: any[] = GAME_VARIABLES.secretWord.split('')
                 .map((e, i) => e === letter ? i : -1)
                 .filter((element) => element != -1);
             GAME_FUNCTIONS.updateCurrentlyGuessedWord(indexesOfMatches);
-            RENDERERS.updateWordDisplayOnTry();
-            GAME_FUNCTIONS.isGameWon();
+            RENDERERS.updateSecretWordDisplay();
+            GAME_FUNCTIONS.triggerGameWon();
         } else {
             letterBtn.classList.add('letter-red-bg');
-            GAME_FUNCTIONS.updateTries();
-            GAME_FUNCTIONS.isGameLost();
+            GAME_FUNCTIONS.updateTriesAmount();
+            GAME_FUNCTIONS.triggerGameLost();
         }
     },
     updateCurrentlyGuessedWord: function (indexesOfMatches: Array<number>) {
-        for (let i = 0; i < GAME_VARIABLES.wordToGuess.length; i++) {
+        for (let i = 0; i < GAME_VARIABLES.secretWord.length; i++) {
+
             if (indexesOfMatches.includes(i)) {
-                GAME_VARIABLES.currentlyGuessedWord[i] = GAME_VARIABLES.wordToGuess.charAt(i);
+                GAME_VARIABLES.currentlyGuessedWord[i] = GAME_VARIABLES.secretWord.charAt(i);
             } else {
                 if (GAME_VARIABLES.currentlyGuessedWord[i] === '_' || indexesOfMatches.length === 0) {
                     GAME_VARIABLES.currentlyGuessedWord[i] = '_';
                 }
             }
+
         }
     }
 }
 
 const DOM = {
     playButton: getHTMLElementOrThrow('#play-button'),
-    replayButton: getHTMLElementOrThrow('#replay-button'),
+    retryButton: getHTMLElementOrThrow('#replay-button'),
     mainDisplay: getHTMLElementOrThrow('#main-display'),
-    manDiv: document.createElement('div'),
-    wordDiv: document.createElement('div'),
-    lettersDiv: document.createElement('div'),
-    letterButtons: [] as HTMLElement[],
-    letterDivs: [] as HTMLElement[],
-    toGuessLetterContainerDiv: document.createElement('div'),
+    hangingManDiv: document.createElement('div'),
+    secretWordDiv: document.createElement('div'),
+    keyboardDiv: document.createElement('div'),
+    keyboardLetters: [] as HTMLElement[],
+    secretWordLetterDivs: [] as HTMLElement[],
+    secretWordLetterContainer: document.createElement('div'),
 }
 
 function getHTMLElementOrThrow(selector: string): HTMLElement {
     const element = document.querySelector(selector);
+
     if (!element) {
         throw new Error(`Missing ${selector}`);
     }
@@ -74,9 +78,9 @@ function getHTMLElementOrThrow(selector: string): HTMLElement {
 }
 
 const GAME_VARIABLES = {
-    currentAmountOfTries: 0,
-    maxAmountOfTries: 6,
-    wordToGuess: '',
+    currentTriesAmount: 0,
+    maxTriesAmount: 6,
+    secretWord: '',
     currentlyGuessedWord: [] as string[],
     //tab discovered letters plutôt 
     alphabet: 'abcdefghijklmnopqrstuvwxyz'.split(''),
@@ -85,15 +89,15 @@ const GAME_VARIABLES = {
 const HANDLERS = {
     playButtonListener: function () {
         RENDERERS.toggleButtonDisabledClass(DOM.playButton as HTMLButtonElement);
-        RENDERERS.toggleButtonDisabledClass(DOM.replayButton as HTMLButtonElement);
+        RENDERERS.toggleButtonDisabledClass(DOM.retryButton as HTMLButtonElement);
         GAME_FUNCTIONS.initGame();
         RENDERERS.initDisplay();
     },
-    replayButtonListener: function () {
+    retryButtonListener: function () {
         GAME_FUNCTIONS.initGame();
         RENDERERS.initDisplay();
     },
-    letterButtonListener: function (e: Event) {
+    keyboardLettersListener: function (e: Event) {
         const currentLetterBtn = e.currentTarget as HTMLButtonElement;
         RENDERERS.toggleButtonDisabledClass(currentLetterBtn as HTMLButtonElement);
 
@@ -110,9 +114,9 @@ const RENDERERS = {
     },
     resetDisplay: function () {
         DOM.mainDisplay.replaceChildren();
-        DOM.lettersDiv.replaceChildren();
-        DOM.toGuessLetterContainerDiv.replaceChildren();
-        DOM.manDiv.replaceChildren();
+        DOM.keyboardDiv.replaceChildren();
+        DOM.secretWordLetterContainer.replaceChildren();
+        DOM.hangingManDiv.replaceChildren();
     },
     displayEndGamePage: function (endMessage: string) {
         RENDERERS.resetDisplay();
@@ -126,11 +130,11 @@ const RENDERERS = {
         button.toggleAttribute('disabled');
     },
     updateTriesDisplay: function () {
-        DOM.manDiv.textContent = `You have ${GAME_VARIABLES.maxAmountOfTries - GAME_VARIABLES.currentAmountOfTries} tries left`
+        DOM.hangingManDiv.textContent = `You have ${GAME_VARIABLES.maxTriesAmount - GAME_VARIABLES.currentTriesAmount} tries left`
     },
-    updateWordDisplayOnTry: function () {
-        DOM.toGuessLetterContainerDiv.replaceChildren();
-        COMPONENT_CREATOR.createToGuessLettersDiv(GAME_VARIABLES.wordToGuess.length);
+    updateSecretWordDisplay: function () {
+        DOM.secretWordLetterContainer.replaceChildren();
+        COMPONENT_CREATOR.createSecretWordLettersDiv(GAME_VARIABLES.secretWord.length);
     }
 }
 
@@ -139,46 +143,46 @@ const COMPONENT_CREATOR = {
         const gameSection = document.createElement('section');
         gameSection.classList.add('game-section');
 
-        DOM.manDiv.classList.add('pendu-div');
+        DOM.hangingManDiv.classList.add('hanging-man-div');
 
-        const lettersAndWordContainer = document.createElement('div')
-        lettersAndWordContainer.classList.add('letters-word-container');
+        const keyboardAndAnswerContainer = document.createElement('div')
+        keyboardAndAnswerContainer.classList.add('keyboard-answer-container');
 
-        COMPONENT_CREATOR.createWordDiv();
-        DOM.lettersDiv.classList.add('letters-div');
+        COMPONENT_CREATOR.createSecretWordDiv();
+        DOM.keyboardDiv.classList.add('keyboard-div');
 
-        lettersAndWordContainer.append(DOM.lettersDiv, DOM.wordDiv)
-        gameSection.append(DOM.manDiv, lettersAndWordContainer);
+        keyboardAndAnswerContainer.append(DOM.keyboardDiv, DOM.secretWordDiv)
+        gameSection.append(DOM.hangingManDiv, keyboardAndAnswerContainer);
         DOM.mainDisplay.append(gameSection);
 
-        COMPONENT_CREATOR.createLettersDiv();
+        COMPONENT_CREATOR.createKeyboardLettersDiv();
     },
-    createWordDiv: function () {
-        DOM.toGuessLetterContainerDiv.classList.add('to-guess-letters-container-div');
-        DOM.wordDiv.classList.add('word-div');
-        COMPONENT_CREATOR.createToGuessLettersDiv(GAME_VARIABLES.wordToGuess.length);
-        DOM.wordDiv.append(DOM.toGuessLetterContainerDiv)
+    createSecretWordDiv: function () {
+        DOM.secretWordLetterContainer.classList.add('secret-word-letters-container');
+        DOM.secretWordDiv.classList.add('secret-word-div');
+        COMPONENT_CREATOR.createSecretWordLettersDiv(GAME_VARIABLES.secretWord.length);
+        DOM.secretWordDiv.append(DOM.secretWordLetterContainer)
     },
-    createToGuessLettersDiv: function (lengthOfWord: number) {
+    createSecretWordLettersDiv: function (lengthOfWord: number) {
         for (let i = 0; i < lengthOfWord; i++) {
             const letterDiv = document.createElement('div');
             letterDiv.textContent = GAME_VARIABLES.currentlyGuessedWord[i];
-            DOM.toGuessLetterContainerDiv.append(letterDiv);
-            DOM.letterDivs.push(letterDiv);
+            DOM.secretWordLetterContainer.append(letterDiv);
+            DOM.secretWordLetterDivs.push(letterDiv);
         }
     },
-    createLettersDiv: function () {
+    createKeyboardLettersDiv: function () {
         for (const letter of GAME_VARIABLES.alphabet) {
             const letterBtn = document.createElement('button');
             letterBtn.classList.add('letter-btn')
             letterBtn.textContent = letter.toUpperCase();
-            letterBtn.addEventListener('click', HANDLERS.letterButtonListener);
-            DOM.lettersDiv.append(letterBtn);
+            letterBtn.addEventListener('click', HANDLERS.keyboardLettersListener);
+            DOM.keyboardDiv.append(letterBtn);
 
-            DOM.letterButtons.push(letterBtn);
+            DOM.keyboardLetters.push(letterBtn);
         }
     }
 }
 
 DOM.playButton.addEventListener('click', HANDLERS.playButtonListener);
-DOM.replayButton.addEventListener('click', HANDLERS.replayButtonListener);
+DOM.retryButton.addEventListener('click', HANDLERS.retryButtonListener);

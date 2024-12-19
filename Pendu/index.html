@@ -31,7 +31,7 @@
                 h-96 w-5/6 
                 shadow-md shadow-gray-950
             }
-            .pendu-div {
+            .hanging-man-div {
                 @apply flex content-center
                 h-full w-1/2
                 p-5
@@ -39,19 +39,19 @@
                 border-e-2 border-gray-500
                 text-xl font-bold
             }
-            .letters-word-container {
+            .keyboard-answer-container {
                 @apply flex flex-col justify-between
                 w-1/2
                 gap-5 p-10
                 bg-gray-300
             }
-            .word-div {
+            .secret-word-div {
                 @apply flex content-center 
                 gap-1 p-5 
                 bg-gray-300
                 text-3xl
             }
-            .letters-div {
+            .keyboard-div {
                 @apply flex flex-wrap content-center 
                 h-1/2 
                 gap-2.5 p-2 
@@ -69,12 +69,12 @@
                 disabled:hover:cursor-default
                 hover:bg-gray-400
             }
-            .to-guess-letters-container-div {
+            .secret-word-letters-container {
                 @apply flex 
                 gap-3
             }
             .end-screen-div {
-                @apply flex  content-center
+                @apply flex content-center
                 h-40 w-3/4
                 text-5xl
             }
@@ -114,7 +114,7 @@
         <h1>Jeu du pendu</h1>
         <button class="btn play-button" id="play-button"><img class="button-image" src="images/start.png"
                 alt=""></button>
-        <button class="btn replay-button" id="replay-button" disabled><img class="button-image" src="images/replay.png"
+        <button class="btn retry-button" id="retry-button" disabled><img class="button-image" src="images/retry.png"
                 alt=""></button>
     </header>
     <main id="main-display">
