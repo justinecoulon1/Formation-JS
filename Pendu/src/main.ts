@@ -58,7 +58,7 @@ const GAME_FUNCTIONS = {
 
 const DOM = {
     playButton: getHTMLElementOrThrow('#play-button'),
-    retryButton: getHTMLElementOrThrow('#replay-button'),
+    retryButton: getHTMLElementOrThrow('#retry-button'),
     mainDisplay: getHTMLElementOrThrow('#main-display'),
     hangingManDiv: document.createElement('div'),
     secretWordDiv: document.createElement('div'),
