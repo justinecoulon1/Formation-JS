@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Base styles for the toggle */
+  .toggle {
+    position: relative;
+    width: 40px;
+    height: calc(4px * 3 + 11px * 2);
+    cursor: pointer;
+    margin: auto;
+    display: block;
+  }
+
+  /* Base styles for the bars */
+  .toggle .bar {
+    width: 100%;
+    height: 4px;
+    background-color: #7b52b9; /* Purple color */
+    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(.5, -0.35, .35, 1.5);
+  }
+
+  /* Positioning bars */
+  .toggle .bar--top {
+    position: absolute;
+    bottom: calc(50% + 11px); /* Initially positioned above center */
+  }
+
+  .toggle .bar--middle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .toggle .bar--bottom {
+    position: absolute;
+    top: calc(50% + 11px); /* Initially positioned below center */
+  }
+
+  /* Checkbox checked state styles - this is where the "X" transformation happens */
+  #checkbox:checked + .toggle .bar--top {
+    transform: translateY(11px) rotate(45deg); /* Move down and rotate 45deg */
+    animation: rotate45 0.35s cubic-bezier(.5,-0.35,.35,1.5);
+  }
+
+  #checkbox:checked + .toggle .bar--middle {
+    opacity: 0; /* Fade out the middle bar */
+    animation: fadeOut 0.35s ease-in-out forwards;
+  }
+
+  #checkbox:checked + .toggle .bar--bottom {
+    transform: translateY(-11px) rotate(-45deg); /* Move up and rotate -45deg */
+    animation: rotateNeg45 0.35s cubic-bezier(.5,-0.35,.35,1.5);
+  }
+}
+
+@layer base {
+    header {
+        @apply bg-green-600 h-52 w-full p-10
+    }
+}
