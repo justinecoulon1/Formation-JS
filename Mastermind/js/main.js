@@ -1,5 +1,5 @@
 const solution = [];
-const colors = ['red', 'blue', 'green', 'yellow', 'white']
+const colors = ['red', 'blue', 'green', 'yellow']
 const currentTry = [];
 const hints = [];
 const exampleBubble = document.querySelectorAll("#colored-bubble");
@@ -26,7 +26,7 @@ const initializeDisplay = function () {
     const bubbleDiv = document.createElement('div');
     bubbleDiv.classList.add("bubbles-div");
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < colors.length; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add("try-bubble");
         bubble.id = i + 1;
@@ -39,7 +39,7 @@ const initializeDisplay = function () {
 
 const initializeSolution = function () {
     solution.length = 0;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < colors.length; i++) {
         solution.push(colors[Math.floor(Math.random() * colors.length)]);
     }
 }
@@ -60,7 +60,7 @@ const addCurrentTryDisplayToHistory = function () {
     const bubbleDiv = document.createElement('div');
     bubbleDiv.classList.add("bubbles-div");
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < colors.length; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add("try-bubble");
         bubble.id = i + 1;
@@ -78,7 +78,7 @@ const checkMatches = function () {
     const copyOfSolution = [...solution];
     const copyOfCurrentTry = [...currentTry];
     const indexesToDelete = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < colors.length; i++) {
         if (currentTry[i] === solution[i]) {
             hints.push("check.png")
             indexesToDelete.push(i)
@@ -104,7 +104,7 @@ const checkMatches = function () {
 }
 
 const isGameEnded = function (indexesToDelete) {
-    return indexesToDelete.length === 5;
+    return indexesToDelete.length === colors.length;
 }
 
 const getHintsDisplay = function () {
@@ -135,12 +135,12 @@ playButton.addEventListener('click', initializeGame);
 
 
 const coloredBubblesEventListener = function () {
-    if (currentTry.length < 5) {
+    if (currentTry.length < colors.length) {
         currentTry.push(this.classList[0]);
         tryBubbles[currentTry.length - 1].classList.add(this.classList[0]);
     }
 
-    if (currentTry.length === 5) {
+    if (currentTry.length === colors.length) {
         checkMatches();
         addCurrentTryDisplayToHistory();
         resetCurrentTry();
