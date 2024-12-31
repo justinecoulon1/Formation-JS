@@ -34,25 +34,46 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    user-select: none;
+
     height: var(--sidebar-header-size);
     padding: 2rem;
+
     background-color: var(--dark-blue);
+    margin-bottom: 1rem;
+
+    user-select: none;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+
+    .header-img {
+        height: 4rem;
+    }
 }
 
 .side-bar {
     display: flex;
     flex-direction: column;
     position: fixed;
+
     height: 100%;
     width: var(--sidebar-header-size);
+
     background-color: var(--dark-blue);
 
     .side-bar-tab {
         display: flex;
+
         height: var(--sidebar-header-size);
         width: var(--sidebar-header-size);
         padding: 0.2rem;
+
+        border-right: 2px solid var(--dark-blue);
+
         object-fit: contain;
 
         &:nth-child(n+2) {

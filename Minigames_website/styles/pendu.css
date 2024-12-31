@@ -17,19 +17,6 @@
     --yellow-middle: #e1b42e;
 }
 
-.header-container {
-    display: flex;
-    align-items: center;
-
-    gap: 1rem;
-
-    .header-img {
-        height: 4rem;
-    }
-}
-
-
-
 #main-display {
     display: flex;
     align-items: stretch;
