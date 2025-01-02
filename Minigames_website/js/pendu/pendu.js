@@ -4,6 +4,8 @@
     const GAME_FUNCTIONS = {
         initGame: function () {
             GAME_VARIABLES.secretWord = GAME_FUNCTIONS.getRandomWord();
+            GAME_VARIABLES.secretWordFormatted = GAME_VARIABLES.secretWord.toLowerCase();
+            GAME_VARIABLES.currentlyGuessedWord = [];
             GAME_VARIABLES.currentTriesAmount = 0;
             GAME_VARIABLES.maxTriesAmount = 6;
             GAME_FUNCTIONS.updateCurrentlyGuessedWord([]);
@@ -32,9 +34,9 @@
             }
         },
         tryLetter: function (letter, letterBtn) {
-            if (GAME_VARIABLES.secretWord.includes(letter)) {
+            if (GAME_VARIABLES.secretWordFormatted.includes(letter)) {
                 letterBtn.classList.add('letter-green-bg');
-                const indexesOfMatches = GAME_VARIABLES.secretWord.split('')
+                const indexesOfMatches = GAME_VARIABLES.secretWordFormatted.split('')
                     .map((e, i) => e === letter ? i : -1)
                     .filter((element) => element != -1);
                 GAME_FUNCTIONS.updateCurrentlyGuessedWord(indexesOfMatches);
@@ -85,6 +87,7 @@
         currentTriesAmount: 0,
         maxTriesAmount: 6,
         secretWord: '',
+        secretWordFormatted: '',
         currentlyGuessedWord: [],
         alphabet: 'abcdefghijklmnopqrstuvwxyz'.split(''),
     };
